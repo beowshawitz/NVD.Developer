@@ -1,0 +1,147 @@
+﻿@page "/availableapps"
+@inherits BlazorClientPageBase
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using NVD.Developer.Apps.Shared
+@attribute [Authorize]
+@inject HttpClient Http
+@inject ToastService toastService
+
+<PageTitle>Available Applications</PageTitle>
+
+<h1>Available Applications</h1>
+
+<p>Are you a developer? Are you missing tools on your virtual desktop? This tool will identify which tools are approved for use and provide an installation script for you to execute.</p>
+<p>Simply browse the available applications, add the interested ones to your cart, and view your cart for options.</p>
+
+<EditForm Model="@PageSubmission" OnValidSubmit="@Submit">
+	<div class="card mb-3">
+		<div class="card-body">
+			<div class="row">
+				<div class="col">
+					<div class="form-floating">
+						<InputText @bind-Value="PageSubmission!.Filter" id="filterField" class="form-control" placeholder="Enter some text to use as a filter" />
+						<label for="filterField">Name Filter</label>
+					</div>
+				</div>
+				<div class="col">
+					<div class="form-floating">
+						<InputSelect @bind-Value="PageSubmission!.PageSize" id="pageSizeField" class="form-select" aria-label="Select a page size">
+							<option selected value="10">10</option>
+							<option value="25">25</option>
+							<option value="50">50</option>
+						</InputSelect>
+						<label for="pageSizeField">Page size</label>
+					</div>
+				</div>
+				<div class="col">
+					<div class="form-floating">
+						<InputSelect @bind-Value="PageSubmission!.SortBy" id="sortByField" class="form-select" aria-label="Select a sorting property">
+							<option selected value="name">Application Name</option>
+						</InputSelect>
+						<label for="sortByField">Sort By</label>
+					</div>
+				</div>
+				<div class="col">
+					<div class="form-floating">
+						<InputSelect @bind-Value="PageSubmission!.SortDirection" id="sortDirectionField" class="form-select" aria-label="Select a sorting direction">
+							<option selected value="asc">Ascending</option>
+							<option value="desc">Descending</option>
+						</InputSelect>
+						<label for="sortDirectionField">Sort Direction</label>
+					</div>
+				</div>
+				<div class="col d-flex align-items-center justify-content-center">
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</EditForm>
+
+@if (applications == null)
+{
+	<p><em>Loading applications...</em></p>
+}
+else
+{
+	if (applications.Length.Equals(0))
+	{
+		<p>
+			<div class="alert alert-secondary" role="alert">
+				There are no applications available approved for use yet.
+			</div>
+		</p>
+	}
+	else
+	{
+		<div class="row" data-masonry='{"percentPosition": true }'>
+			@foreach (var app in applications)
+			{
+				<div class="col col-sm-6 col-lg-4 mb-4">
+					<div class="card">
+						<img src="..." class="card-img-top" alt="...">
+						<div class="card-body">
+							<h5 class="card-title">@app.Name</h5>
+							<p class="card-text">@app.Description</p>
+						</div>
+						<div class="card-footer">
+							<button type="button" class="btn btn-sm btn-primary" @onclick="@(() => AddToCart(app))">Add to cart</button>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+		<nav aria-label="Page navigation example">
+			<ul class="pagination">
+				<li class="page-item"><a class="page-link" href="#">Previous</a></li>
+				<li class="page-item"><a class="page-link" href="#">1</a></li>
+				<li class="page-item"><a class="page-link" href="#">2</a></li>
+				<li class="page-item"><a class="page-link" href="#">3</a></li>
+				<li class="page-item"><a class="page-link" href="#">Next</a></li>
+			</ul>
+		</nav>
+	}
+}
+
+<script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
+
+@code {
+	private AppDeployment[]? applications;
+	private AppPageSubmission? PageSubmission { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		PageSubmission ??= new();
+		var response = await Http.PostAsJsonAsync("AppDeployment", PageSubmission);
+		response.EnsureSuccessStatusCode();
+		applications = await response.Content.ReadFromJsonAsync<AppDeployment[]>();
+	}
+
+	private async Task Submit()
+	{
+
+		PageSubmission ??= new();
+		var response = await Http.PostAsJsonAsync("AppDeployment", PageSubmission);
+		response.EnsureSuccessStatusCode();
+		applications = await response.Content.ReadFromJsonAsync<AppDeployment[]>();
+	}
+
+	private async Task AddToCart(AppDeployment app)
+	{
+		string? userId = await GetUserId();
+		if (!string.IsNullOrEmpty(userId))
+		{
+			var response = await Http.PutAsJsonAsync($"MyCart/{userId}", app);
+			response.EnsureSuccessStatusCode();
+			if(await response.Content.ReadFromJsonAsync<bool>())
+			{
+				toastService.ShowToast($"{app.Name} was added to the cart", ToastLevel.Info);
+			}
+			else
+			{
+				toastService.ShowToast($"{app.Name} was NOT added to the cart", ToastLevel.Warning);
+			}
+		}
+	}
+}

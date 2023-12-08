@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-bs-theme="light" class="h-100">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"] - NVD Developer</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="d-flex flex-column h-100">
+    <header data-bs-theme="dark">
+        <div class="collapse text-bg-dark" id="navbarHeader">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-8 col-md-7 py-4">
+                        <h4>About</h4>
+                        <p class="text-body-secondary">Are you a developer? Are you missing tools on your virtual desktop? This site will identify which tools are approved for use and provide an installation script for you to execute.</p>
+                    </div>
+                    <div class="col-sm-4 offset-md-1 py-4">
+                        <h4>Contact</h4>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Visit our website</a></li>
+                            <li><a href="#" class="text-white">Email me</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="navbar navbar-dark bg-dark shadow-sm">
+            <div class="container d-flex flex-wrap align-items-center">
+                <a href="/Index" class="navbar-brand d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-window-desktop me-2" viewBox="0 0 16 16">
+                        <path d="M3.5 11a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-9Z" />
+                        <path d="M2.375 1A2.366 2.366 0 0 0 0 3.357v9.286A2.366 2.366 0 0 0 2.375 15h11.25A2.366 2.366 0 0 0 16 12.643V3.357A2.366 2.366 0 0 0 13.625 1H2.375ZM1 3.357C1 2.612 1.611 2 2.375 2h11.25C14.389 2 15 2.612 15 3.357V4H1v-.643ZM1 5h14v7.643c0 .745-.611 1.357-1.375 1.357H2.375A1.366 1.366 0 0 1 1 12.643V5Z" />
+                    </svg>
+                    <strong>NVD Developer</strong>
+                </a>
+                <ul class="nav me-auto">
+                    <li class="nav-item">
+                        <a href="/Applications/" class="nav-link link-body-emphasis" aria-current="page">Applications</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/List/" class="nav-link link-body-emphasis" aria-current="page">My List</a>
+                    </li>
+                    <li class="nav-item" asp-authpolicy="@AuthorizationPolicies.AssignmentToAdminRoleRequired">
+                        <a class="nav-link link-body-emphasis" asp-area="" asp-page="/Admin/Index" title="Click to access the administration area.">Admin</a>
+                    </li>
+                </ul>
+                <partial name="_LoginPartial" />
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+    <main class="flex-shrink-0">
+        @RenderBody()
+    </main>
+    <footer class="text-body-secondary py-5 mt-auto bg-body-tertiary">
+        <div class="container">
+            <p class="float-end mb-1">
+                <a href="#">Back to top</a>
+            </p>
+            <p class="mb-1">Need to know which applications are approved for installation on your NVD? This application can help!</p>
+            <p class="mb-0">Scripted installs can use: <a href="https://learn.microsoft.com/en-us/windows/package-manager/" target="_blank">Windows Package Manager</a> or a variety of others.</p>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

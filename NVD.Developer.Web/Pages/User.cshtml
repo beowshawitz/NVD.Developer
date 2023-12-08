@@ -1,0 +1,73 @@
+﻿@page
+@model NVD.Developer.Web.Pages.UserModel
+@{
+	ViewData["Title"] = "User Information";
+}
+<div class="container">
+	<div class="row">
+		<div class="col">
+			<p class="lead mt-3">
+				The user information was retrieved from Azure Entra Id as part of your authentication into this system. If you submitted any application requests, the requests will be displayed with the current status.
+			</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-8">
+			<div class="card">
+				<div class="card-header">
+					User Information
+				</div>
+				<div class="card-body">
+					<div class="row mb-3">
+						<div class="col">
+							<label asp-for="IdentityPrincipalData.Name" class="form-label" title="The user's name.'"></label>
+							<input asp-for="IdentityPrincipalData.Name" class="form-control" type="text" readonly />
+						</div>
+						<div class="col">
+							<label asp-for="IdentityPrincipalData.DisplayName" class="form-label" title="The user's display name.'"></label>
+							<input asp-for="IdentityPrincipalData.DisplayName" class="form-control" type="text" readonly />
+						</div>
+					</div>
+					<div class="row mb-3">
+						<div class="col">
+							<label asp-for="IdentityPrincipalData.Email" class="form-label" title="The users's email address.'"></label>
+							<input asp-for="IdentityPrincipalData.Email" class="form-control" type="text" readonly />
+						</div>
+						<div class="col">
+							<label asp-for="IdentityPrincipalData.Mobile" class="form-label" title="The user's mobile phone.'"></label>
+							<input asp-for="IdentityPrincipalData.Mobile" class="form-control" type="text" readonly />
+						</div>
+					</div>
+					<div class="row mb-3">
+						<label asp-for="IdentityPrincipalData.Claims" class="form-label" title="The claims associated with the user."></label>
+						<select asp-for="IdentityPrincipalData.Claims" class="form-select" multiple size="10" readonly>
+							@foreach (var claim in Model.IdentityPrincipalData.Claims)
+							{
+								<option value="">@claim</option>
+							}
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-4">
+			<div class="card">
+				<div class="card-header">
+					Application Requests
+				</div>
+				<div class="card-body">
+					<div class="list-group">
+						@foreach (var req in Model.AppRequests)
+						{
+							<a href="javascript:void(0);" class="list-group-item">
+								<div><strong>@req.ApplicationName</strong></div>
+								<div><small>Updated: @req.GetPrettyDateUpdated()</small></div>
+								<div><small>Status: <span class="badge text-bg-secondary">@req.Status.StatusName</span></small></div>
+							</a>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

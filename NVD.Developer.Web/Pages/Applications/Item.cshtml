@@ -1,0 +1,187 @@
+﻿@page
+@model NVD.Developer.Web.Pages.Applications.ItemModel
+@{
+	ViewData["Title"] = "Application Item";
+}
+
+<div class="container py-5">
+	<div class="row">
+		<div class="col-8">
+			<h1>@Model.ApplicationItem.DisplayName</h1>
+			<h4 class="text-muted">About this item...</h4>
+			<p class="lead">@Model.ApplicationItem.Description</p>
+
+			<div class="input-group mb-3">
+				<span class="input-group-text col-3" id="createdOnInputGroup">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock me-2" viewBox="0 0 16 16">
+						<path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
+						<path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z" />
+					</svg>
+					Created on:
+				</span>
+				<input type="datetime-local" class="form-control" readonly asp-for="@Model.ApplicationItem.DateCreated" aria-label="Sizing example input" aria-describedby="createdOnInputGroup">
+			</div>
+
+			<div class="input-group mb-3">
+				<span class="input-group-text col-3" id="updatedOnInputGroup">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock me-2" viewBox="0 0 16 16">
+						<path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
+						<path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z" />
+					</svg>
+					Updated on:
+				</span>
+				<input type="datetime-local" class="form-control" readonly asp-for="@Model.ApplicationItem.DateUpdated" aria-label="Sizing example input" aria-describedby="updatedOnInputGroup">
+			</div>
+			<div class="input-group mb-3">
+				<span class="input-group-text col-3" id="licenseRequiredInputGroup">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock me-2" viewBox="0 0 16 16">
+						<path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
+					</svg> License Required
+				</span>
+				<div class="form-check form-switch d-flex align-items-center">
+					<input class="form-check-input mt-0 ms-1" disabled type="checkbox" role="switch" id="flexSwitchCheckDefault" checked="@Model.ApplicationItem.IsLicenseRequired">
+				</div>
+			</div>
+			<div class="input-group mb-3">
+				<label class="input-group-text col-3" for="versionSelector">Versions</label>
+				<select id="versionSelector" class="form-select" aria-label="A version selection" readonly>
+					<option selected>Click to select a specific version</option>
+					@foreach (var version in Model.ApplicationItem.Versions.OrderByDescending(x => x.Name))
+					{
+						<option value="@version.Id">@version.Name</option>
+					}
+				</select>
+			</div>
+
+			<div class="row">
+				<div class="col-6">
+					<div id="itemActions" class="card">
+						<div class="card-body d-flex justify-content-center">
+							<form method="post" asp-page-handler="AddToList">
+								<input type="hidden" name="appId" value="@Model.ApplicationItem.Id" />
+								<input type="hidden" name="versionId" value="" />
+								<button type="submit" class="btn btn-sm btn-outline-primary addAppToList" title="Click to add this item to your list.">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+										<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+									</svg> Add
+								</button>
+							</form>
+							<a href="#" class="btn btn-sm btn-outline-danger ms-3" title="Click to report this item." data-bs-toggle="modal" data-bs-target="#reportAppModal">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag" viewBox="0 0 16 16">
+									<path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12.435 12.435 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A19.626 19.626 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a19.587 19.587 0 0 0 1.349-.476l.019-.007.004-.002h.001M14 1.221c-.22.078-.48.167-.766.255-.81.252-1.872.523-2.734.523-.886 0-1.592-.286-2.203-.534l-.008-.003C7.662 1.21 7.139 1 6.5 1c-.669 0-1.606.229-2.415.478A21.294 21.294 0 0 0 3 1.845v6.433c.22-.078.48-.167.766-.255C4.576 7.77 5.638 7.5 6.5 7.5c.847 0 1.548.28 2.158.525l.028.01C9.32 8.29 9.86 8.5 10.5 8.5c.668 0 1.606-.229 2.415-.478A21.317 21.317 0 0 0 14 7.655V1.222z" />
+								</svg> Report
+							</a>
+							@if (Model.IsAdmin)
+							{
+								<a href="/Admin/Item?id=@Model.ApplicationItem.Id" class="btn btn-outline-secondary btn-sm ms-3" title="Click to edit this item.">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+										<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+										<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+									</svg>
+									Edit
+								</a>
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div class="col-4">
+			@if (Model.ApplicationItem.ImageData != null)
+			{
+				<img id="appImage" class="img-fluid" src="data:image/*;base64,@(Convert.ToBase64String(Model.ApplicationItem.ImageData))" />
+			}
+			else
+			{
+				<img id="appImage" class="img-fluid" style="width:100%;" src="/images/icons8-application-96.png" />
+			}
+		</div>
+	</div>
+
+</div>
+
+<div class="container">
+	<div class="row py-3">
+		<div class="col-8">
+			<h4>Application Template</h4>
+			<div class="card mb-3" style="max-width: 540px;">
+				<div class="row g-0">
+					<div class="col-md-4">
+						<div style="width:100%; height:250px;" class="d-flex align-items-center bg-dark-subtle">
+							@if (Model.ApplicationItem.ImageData != null)
+							{
+								<img id="appImage" class="img-fluid" src="data:image/*;base64,@(Convert.ToBase64String(Model.ApplicationItem.ImageData))" />
+							}
+							else
+							{
+								<img id="appImage" class="img-fluid" style="width:100%;" src="/images/icons8-application-96.png" />
+							}
+						</div>
+					</div>
+					<div class="col-md-8 d-flex flex-column">
+						<div class="card-body flex-grow-1">
+							<div>
+								<h5 class="card-title">@Model.ApplicationItem.DisplayName</h5>
+								<div class="card-text overflow-y-hidden" style="max-height:120px;">@Model.ApplicationItem.Description</div>
+							</div>
+						</div>
+						<div class="card-footer d-flex justify-content-center">
+							<a href="#" class="btn btn-sm btn-outline-primary disabled" title="Click to add this item to your list.">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+									<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+									<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+								</svg> Add
+							</a>
+							<a href="#" class="btn btn-sm btn-outline-secondary ms-3 disabled" title="Click to see more details about this item.">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+									<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+									<path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+								</svg> View
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="reportAppModal" tabindex="-1" aria-labelledby="reportAppModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form method="post" asp-page-handler="ReportApp">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="reportAppModalLabel">Report this App</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" name="appId" value="@Model.ApplicationItem.Id" />
+					<div class="mb-3">
+						<label for="reportingDescription" class="form-label">Description</label>
+						<textarea id="reportingDescription" name="reportingDescription" class="form-control" placeholder="Describe why this application is being reported" aria-label="Describe why this application is being reported"></textarea>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Report</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<partial name="_toastPartial" />
+@section scripts {
+	<partial name="_ValidationScriptsPartial" />
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$(".toast").toast('show');
+			$("#versionSelector").change(function () {
+				$('#itemActions input[name="versionId"]').val($(this).val());
+			});
+			$(".addAppToList").click(function () {
+				$(this).text("Loading...").prepend("<span class=\"spinner-grow spinner-grow-sm mx-2\"></span>").addClass("disabled");
+			});
+		});
+	</script>
+}

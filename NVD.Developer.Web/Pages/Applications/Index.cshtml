@@ -1,0 +1,186 @@
+﻿@page
+@model IndexModel
+@{
+	ViewData["Title"] = "Application Listing";
+}
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+	<symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+		<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+	</symbol>
+	<symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+		<path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+	</symbol>
+	<symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+		<path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+	</symbol>
+	<symbol id="x-circle-fill" viewBox="0 0 16 16">
+		<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"></path>
+	</symbol>
+	<symbol id="circle-plus" viewBox="0 0 16 16">
+		<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+		<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+	</symbol>
+</svg>
+<section class="py-5 text-center container" style="background: url('/images/availableapps.jpg');  background-repeat: no-repeat; background-size: 100% 100%;">
+	<div class="row py-lg-5">
+		<div class="col-lg-6 col-md-8 mx-auto text-light">
+			<h1 class="fw-light">Available Applications</h1>
+			<p class="lead">Simply browse the available applications, add the interested ones to your list, and view your list for options.</p>
+			<p>
+				<a href="/List/" class="btn btn-primary my-2">View my list</a>
+			</p>
+		</div>
+	</div>
+</section>
+<div class="album py-5">
+	<div class="container">
+		<form method="post">
+			<div class="card mb-3">
+				<div class="card-body">
+					<div class="row">
+						<div class="col">
+							<div class="form-floating">
+								<input asp-for="PageSubmission.Filter" type="text" class="form-control" placeholder="Enter some text to use as a filter" />
+								<label asp-for="PageSubmission.Filter">Name Filter</label>
+							</div>
+						</div>
+						<div class="col">
+							<div class="form-floating">
+								<select asp-for="PageSubmission.PageSize" class="form-select" aria-label="Select a page size">
+									<option selected value="10">10</option>
+									<option value="25">25</option>
+									<option value="50">50</option>
+								</select>
+								<label asp-for="PageSubmission.PageSize">Page size</label>
+							</div>
+						</div>
+						<div class="col">
+							<div class="form-floating">
+								<select asp-for="PageSubmission.SortBy" class="form-select" aria-label="Select a sorting property">
+									<option selected value="name">Application Name</option>
+									<option value="dateupdated">Date Updated</option>
+								</select>
+								<label asp-for="PageSubmission.SortBy">Sort By</label>
+							</div>
+						</div>
+						<div class="col">
+							<div class="form-floating">
+								<select asp-for="PageSubmission.SortDirection" class="form-select" aria-label="Select a sorting direction">
+									<option selected value="asc">Ascending</option>
+									<option value="desc">Descending</option>
+								</select>
+								<label asp-for="PageSubmission.SortDirection">Sort Direction</label>
+							</div>
+						</div>
+						<div class="col d-flex align-items-center justify-content-center">
+							<button type="submit" class="btn btn-primary me-1">Apply</button>
+							<a href="/Index" class="btn btn-secondary">Clear</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+			@foreach (var app in Model.PageResult.Applications)
+			{
+				<div class="col">
+					<div class="card mb-3" style="max-width: 540px;">
+						<div class="row g-0">
+							<div class="col-md-4">
+								<div style="width:100%; height:250px;" class="d-flex align-items-center bg-dark-subtle">
+									@if (app.ImageData != null)
+									{
+										<img id="appImage" class="img-fluid" src="data:image/*;base64,@(Convert.ToBase64String(app.ImageData))" />
+									}
+									else
+									{
+										<img id="appImage" class="img-fluid" style="width:100%;" src="/images/icons8-application-96.png" />
+									}
+								</div>
+
+							</div>
+							<div class="col-md-8 d-flex flex-column">
+								<div class="card-body flex-grow-1">
+									<div>
+										<h5 class="card-title">@app.DisplayName</h5>
+										<div class="card-text overflow-y-hidden" style="max-height:120px;">@app.Description</div>
+									</div>
+								</div>
+								<div class="card-footer d-flex justify-content-center">
+									<form method="post" asp-page-handler="AddToList">
+										<input type="hidden" name="appId" value="@app.Id" />
+										<button type="submit" class="btn btn-sm btn-outline-primary addAppToList" title="Click to add this item to your list.">
+											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+												<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+												<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+											</svg> Add
+										</button>
+									</form>
+									<a href="/Applications/Item?id=@app.Id" class="btn btn-sm btn-outline-secondary ms-3" title="Click to see more details about this item.">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+											<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+											<path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+										</svg> View
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+		@if (Model.PageResult.ItemCount.Equals(0) || Model.PageResult.Applications == null || Model.PageResult.Applications.Count().Equals(0))
+		{
+			<div class="row justify-content-md-center mt-4">
+				<div class="col-8">
+					<div class="bs-callout bs-callout-info">
+						There were no applications to display.
+					</div>
+				</div>
+			</div>
+		}
+		<nav aria-label="Application page navigation" class="mt-5">
+			<ul class="pagination justify-content-center">
+				<li class="page-item @{
+							@((Model.PageResult.IsFirstPage) ? new {disabled="disabled"} : null)}">
+					<a class="page-link" asp-page="./Index" asp-route-currentpage="@(Model.PageResult.CurrentPage-1)">Previous</a>
+				</li>
+
+				@for (int i = 1; i <= Model.PageResult.TotalPages; i++)
+				{
+					if (Model.PageResult.CurrentPage.Equals(i))
+					{
+						<li class="page-item active" aria-current="page"><a class="page-link" asp-page="./Index" asp-route-currentpage="@i">@i</a></li>
+					}
+					else
+					{
+						<li class="page-item"><a class="page-link" asp-page="./Index" asp-route-currentpage="@i">@i</a></li>
+					}
+				}
+
+				<li class="page-item @{
+							@((Model.PageResult.IsLastPage) ? new {disabled="disabled"} : null)}">
+					<a class="page-link" asp-page="./Index" asp-route-currentpage="@(Model.PageResult.CurrentPage+1)">Next</a>
+				</li>
+			</ul>
+		</nav>
+		<div class="alert alert-primary d-flex align-items-center mt-4" role="alert">
+			<svg class="bi flex-shrink-0 me-2" role="img" aria-label="Info:" width="16" height="16"><use xlink:href="#info-fill" /></svg>
+			<div>
+				Is there an application or version missing, and you would like to request it? Fill out our <a href="/Applications/Request" title="Click to request an application/version">application request form</a>, and we will look into it!.
+			</div>
+		</div>
+	</div>
+</div>
+<partial name="_toastPartial" />
+@section scripts {
+	<partial name="_ValidationScriptsPartial" />
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$(".toast").toast('show');
+			$(".addAppToList").click(function () {
+				$(this).text("Loading...").prepend("<span class=\"spinner-grow spinner-grow-sm mx-2\"></span>").addClass("disabled");
+			});
+		});
+	</script>
+}

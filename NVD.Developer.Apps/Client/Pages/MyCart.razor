@@ -1,0 +1,100 @@
+﻿@page "/mycart"
+@inherits BlazorClientPageBase
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Security.Claims
+@using NVD.Developer.Apps.Shared
+@attribute [Authorize]
+@inject HttpClient Http
+@inject ToastService toastService
+
+<PageTitle>My Cart</PageTitle>
+
+<h1>My Cart</h1>
+
+<p>The applications listed here are stored for your action.</p>
+
+@if (applications == null)
+{
+    <p><em>Loading Your Cart...</em></p>
+}
+else
+{
+    if (applications.Length.Equals(0))
+    {
+        <p>
+            <div class="alert alert-secondary" role="alert">
+                There are no items in your cart yet.
+            </div>
+        </p>
+    }
+    else
+    {
+        <div class="row mb-3">
+            <div class="col">
+                <div class="list-group">
+                    @foreach (var app in applications)
+                    {
+                        <label class="list-group-item d-flex align-items-center">
+                            <span class="p-0 m-0 flex-grow-1">
+                                <input class="form-check-input me-1" type="checkbox" value="@app.Id">
+                                @app.Name
+                            </span>
+                            <button type="button" class="btn btn-danger btn-sm" @onclick="@(() => RemoveAppFromCart(app))"><span class="oi oi-trash" aria-hidden="true"></span></button>
+                        </label>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <button type="button" class="btn btn-primary" @onclick="@(() => GenerateScripts())">Generate Scripts</button>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    private AppDeployment[]? applications;
+
+    protected override async Task OnInitializedAsync()
+    {
+        string? userId = await GetUserId();
+        if (!string.IsNullOrEmpty(userId))
+        {
+            applications = await Http.GetFromJsonAsync<AppDeployment[]>($"MyCart/{userId}");
+        }
+        else
+        {
+            applications = new AppDeployment[0];
+        }
+    }
+
+    private async Task RemoveAppFromCart(AppDeployment app)
+    {
+        string? userId = await GetUserId();
+        if (!string.IsNullOrEmpty(userId))
+        {
+            var response = await Http.DeleteAsync($"MyCart/{userId}/{app.Id}");
+            response.EnsureSuccessStatusCode();
+            if (await response.Content.ReadFromJsonAsync<bool>())
+            {
+                toastService.ShowToast($"{app.Name} was removed from the cart", ToastLevel.Info);
+                applications = await Http.GetFromJsonAsync<AppDeployment[]>($"MyCart/{userId}");
+            }
+            else
+            {
+                toastService.ShowToast($"{app.Name} was NOT removed from the cart", ToastLevel.Warning);
+            }
+        }
+    }
+
+    private async Task GenerateScripts()
+    {
+        string? userId = await GetUserId();
+        if (!string.IsNullOrEmpty(userId))
+        {
+            
+        }
+    }
+}
