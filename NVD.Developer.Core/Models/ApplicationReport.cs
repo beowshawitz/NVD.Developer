@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace NVD.Developer.Core.Models
 {
-	public class ApplicationRequest
+	public class ApplicationReport
 	{
 		public int Id { get; set; }
 
@@ -15,10 +15,10 @@ namespace NVD.Developer.Core.Models
 		[Display(Name = "Status")]
 		public int StatusId { get; set; } = 1;
 
-		public ApplicationRequestStatus? Status { get; set; }
+		public ApplicationReportStatus? Status { get; set; }
 
 		[NotMapped]
-		[Display(Name = "Requesting User")]
+		[Display(Name = "Requesting User")]		
 		public string UserName { get; set; } = string.Empty;
 
 		[NotMapped]
@@ -33,8 +33,8 @@ namespace NVD.Developer.Core.Models
 		public string? ApplicationVersion { get; set; } = string.Empty;
 
 		[Required]
-		[Display(Name = "Reason")]
-		public string RequestingReason { get; set; } = string.Empty;
+		[Display(Name = "Reporting Reason")]
+		public string Description { get; set; } = string.Empty;
 
 		[Display(Name = "Date Created")]
 		public DateTime DateCreated { get; set; }
@@ -42,7 +42,7 @@ namespace NVD.Developer.Core.Models
 		[Display(Name = "Date Updated")]
 		public DateTime DateUpdated { get; set; }
 
-		public ApplicationRequest()
+		public ApplicationReport()
 		{
 		}	
 

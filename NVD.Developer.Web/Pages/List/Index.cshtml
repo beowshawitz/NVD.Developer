@@ -31,7 +31,7 @@
 </svg>
 <section class="py-5 text-center container" style="background: url('/images/applicationlist.jpg');  background-repeat: no-repeat; background-size: 100% 100%;">
 	<div class="row py-lg-5">
-		<div class="col-lg-6 col-md-8 mx-auto text-light">
+		<div class="col-md-8 mx-auto text-light">
 			<h1 class="fw-light">Your Application List</h1>
 			<p class="lead">This list displays the applications you selected. If there are no apps, please visit the application listing on the home page, where you will find the approved application list.</p>
 			<p>
@@ -73,8 +73,7 @@
 									var app = appListItem.Application;
 									<li class="list-group-item d-flex align-items-center">
 										<div class="flex-grow-1">
-											<input class="form-check-input me-1" type="checkbox" data-val="true" value="true" id="appChk_@appListItem.Id" name="appChk_@appListItem.Id">
-											
+											<input class="form-check-input me-1" type="checkbox" data-val="true" value="true" id="appChk_@appListItem.Id" name="appChk_@appListItem.Id" title="Check this to include this application in the script generation." />											
 											<label class="form-check-label" for="appChk_@appListItem.Id">@app.DisplayName</label>
 											@if (appListItem.Version != null && !string.IsNullOrEmpty(appListItem.Version.Name))
 											{
@@ -84,18 +83,22 @@
 											<small class="d-block text-body-secondary ms-4">@app.Description</small>
 											<strong class="ms-4 me-2"><small>Install As:</small></strong>
 											<div class="form-check form-switch form-check-inline">
-												<input class="form-check-input" type="radio" role="switch" name="installAs_@appListItem.Id" id="installAs_@appListItem.Id" value="U" checked>
+												<input class="form-check-input" type="radio" role="switch" name="installAs_@appListItem.Id" id="installAs_@appListItem.Id" value="U" checked title="Check this to install this application as the logged in user." />
 												<label class="form-check-label" for="installAs_@appListItem.Id">User</label>
 											</div>
 											<div class="form-check form-switch form-check-inline">
-												<input class="form-check-input" type="radio" role="switch" name="installAs_@appListItem.Id" id="installAs_@appListItem.Id" value="S">
+												<input class="form-check-input" type="radio" role="switch" name="installAs_@appListItem.Id" id="installAs_@appListItem.Id" value="S" title="Check this to install this application as the system." />
 												<label class="form-check-label" for="installAs_@appListItem.Id">System</label>
 											</div>
 											<strong class="ms-4 me-2"><small>Uninstall Previous:</small></strong>
 											<div class="form-check form-switch form-check-inline">
-												<input class="form-check-input" type="checkbox" role="switch" name="uninstallPrev_@appListItem.Id" data-val="true" value="true" id="uninstallPrev_@appListItem.Id">
-												
+												<input class="form-check-input" type="checkbox" role="switch" name="uninstallPrev_@appListItem.Id" data-val="true" value="true" id="uninstallPrev_@appListItem.Id" title="Check this to uninstall the previous version of the package during upgrade." />
 												<label class="form-check-label" for="uninstallPrev_@appListItem.Id"></label>
+											</div>
+											<strong class="ms-4 me-2"><small>Accept Agreements:</small></strong>
+											<div class="form-check form-switch form-check-inline">
+												<input class="form-check-input" type="checkbox" role="switch" name="acceptAgreements_@appListItem.Id" data-val="true" value="true" id="acceptAgreements_@appListItem.Id" title="Check this to accept the source license agreement, and avoid the prompt." />
+												<label class="form-check-label" for="acceptAgreements_@appListItem.Id"></label>
 											</div>
 										</div>
 										<div>

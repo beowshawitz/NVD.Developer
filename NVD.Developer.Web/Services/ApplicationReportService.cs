@@ -9,75 +9,77 @@ using System.Text.Json.Nodes;
 
 namespace NVD.Developer.Web.Services
 {
-    public class ApplicationRequestService : AzServiceBase
+    public class ApplicationReportService : AzServiceBase
 	{
 		private readonly string _route;
 
-		public ApplicationRequestService(HttpClient httpClient, IConfiguration configuration) : base(httpClient, configuration)
+		public ApplicationReportService(HttpClient httpClient, IConfiguration configuration) : base(httpClient, configuration)
 		{
-			_route = configuration["ApplicationRequestService:ApiRoute"];
+			_route = configuration["ApplicationReportService:ApiRoute"];
 		}
 
-        public async Task<AppReqPageResult?> GetApplicationRequests(PageSubmission request)
+        public async Task<AppReportPageResult?> GetApplicationReports(PageSubmission request)
         {
             try
             {
                 var json = JsonConvert.SerializeObject(request);
                 using var content = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync($"{_route}/GetRequests", content);
+                var response = await _httpClient.PostAsync($"{_route}/GetReports", content);
                 response.EnsureSuccessStatusCode();
                 using(HttpContent respContent = response.Content)
                 {
                     var jsonResp = await respContent.ReadAsStringAsync();
-                    return string.IsNullOrEmpty(jsonResp) ? null : JsonConvert.DeserializeObject<AppReqPageResult>(jsonResp);
+                    return string.IsNullOrEmpty(jsonResp) ? null : JsonConvert.DeserializeObject<AppReportPageResult>(jsonResp);
 				}
             }
             catch (Exception ex)
             {
-                ApplicationException appEx = new ApplicationException("An error occurred while retrieving the application requests.", ex);
+                ApplicationException appEx = new ApplicationException("An error occurred while retrieving the application reports.", ex);
                 throw appEx;
             }
         }
 
-		public async Task<List<ApplicationRequest>?> GetUserApplicationRequests(string userId)
+		public async Task<List<ApplicationReport>?> GetUserApplicationReports(string userId)
 		{
 			try
 			{
-				var response = await _httpClient.GetAsync($"{_route}/GetUserRequests?userId={userId}");
+				var response = await _httpClient.GetAsync($"{_route}/GetUserReports?userId={userId}");
 				response.EnsureSuccessStatusCode();
 				using (HttpContent respContent = response.Content)
 				{
 					var jsonResp = await respContent.ReadAsStringAsync();
-					return string.IsNullOrEmpty(jsonResp) ? null : JsonConvert.DeserializeObject<List<ApplicationRequest>>(jsonResp);
+					return string.IsNullOrEmpty(jsonResp) ? null : JsonConvert.DeserializeObject<List<ApplicationReport>>(jsonResp);
 				}
 			}
 			catch (Exception ex)
 			{
-				ApplicationException appEx = new ApplicationException("An error occurred while retrieving the user's application requests.", ex);
+				ApplicationException appEx = new ApplicationException("An error occurred while retrieving the user's application reports.", ex);
 				throw appEx;
 			}
-		}		
+		}
 
-		public async Task<ApplicationRequest?> GetRequest(int requestId)
+		
+
+		public async Task<ApplicationReport?> GetReport(int itemId)
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{_route}/{requestId}");
+                var response = await _httpClient.GetAsync($"{_route}/{itemId}");
                 response.EnsureSuccessStatusCode();
                 using (HttpContent respContent = response.Content)
                 {
 					var jsonResp = await respContent.ReadAsStringAsync();
-					return string.IsNullOrEmpty(jsonResp) ? null : JsonConvert.DeserializeObject<ApplicationRequest>(jsonResp);
+					return string.IsNullOrEmpty(jsonResp) ? null : JsonConvert.DeserializeObject<ApplicationReport>(jsonResp);
 				}
 			}
             catch (Exception ex)
             {
-                ApplicationException appEx = new ApplicationException("An error occurred while retrieving the application request.", ex);
+                ApplicationException appEx = new ApplicationException("An error occurred while retrieving the application report.", ex);
                 throw appEx;
             }
         }
 
-		public async Task<ApplicationRequest?> SaveUpdateItem(ApplicationRequest item)
+		public async Task<ApplicationReport?> SaveUpdateItem(ApplicationReport item)
 		{
 			try
 			{
@@ -96,17 +98,17 @@ namespace NVD.Developer.Web.Services
 				using (HttpContent respContent = response.Content)
 				{
 					var jsonResp = await respContent.ReadAsStringAsync();
-					return string.IsNullOrEmpty(jsonResp) ? null : JsonConvert.DeserializeObject<ApplicationRequest>(jsonResp);
+					return string.IsNullOrEmpty(jsonResp) ? null : JsonConvert.DeserializeObject<ApplicationReport>(jsonResp);
 				}
 			}
 			catch (Exception ex)
 			{
-				ApplicationException appEx = new ApplicationException("An error occurred while saving/updating the application request.", ex);
+				ApplicationException appEx = new ApplicationException("An error occurred while saving/updating the application report.", ex);
 				throw appEx;
 			}
 		}
 
-		public async Task<bool> DeleteItem(ApplicationRequest item)
+		public async Task<bool> DeleteItem(ApplicationReport item)
 		{
 			try
 			{
@@ -120,12 +122,12 @@ namespace NVD.Developer.Web.Services
 			}
 			catch (Exception ex)
 			{
-				ApplicationException appEx = new ApplicationException("An error occurred while deleting the application request.", ex);
+				ApplicationException appEx = new ApplicationException("An error occurred while deleting the application report.", ex);
 				throw appEx;
 			}
 		}
 
-		public async Task<List<ApplicationRequestStatus>?> GetStatusItems()
+		public async Task<List<ApplicationReportStatus>?> GetStatusItems()
 		{
 			try
 			{
@@ -134,7 +136,7 @@ namespace NVD.Developer.Web.Services
 				using (HttpContent respContent = response.Content)
 				{
 					var jsonResp = await respContent.ReadAsStringAsync();
-					return string.IsNullOrEmpty(jsonResp) ? null : JsonConvert.DeserializeObject<List<ApplicationRequestStatus>>(jsonResp);
+					return string.IsNullOrEmpty(jsonResp) ? null : JsonConvert.DeserializeObject<List<ApplicationReportStatus>>(jsonResp);
 				}
 			}
 			catch (Exception ex)

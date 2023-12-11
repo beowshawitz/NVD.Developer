@@ -17,17 +17,23 @@ namespace NVD.Developer.Web.Pages.Applications
 		private readonly ApplicationService _applicationService;
 		private readonly MyListService _myAppListService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly ApplicationReportService _applicationReportService;
 
-		public ItemModel(ILogger<ItemModel> logger, MyListService myAppListService, ApplicationService applicationService, IAuthorizationService authorizationService)
+		public ItemModel(ILogger<ItemModel> logger, MyListService myAppListService, ApplicationService applicationService, IAuthorizationService authorizationService, ApplicationReportService applicationReportService)
 		{
 			_logger = logger;
 			_myAppListService = myAppListService;
 			_applicationService = applicationService;
 			_authorizationService = authorizationService;
+			_applicationReportService = applicationReportService;
 		}
 
 		[BindProperty]
 		public Application ApplicationItem { get; set; } = default!;
+
+
+		[BindProperty]
+		public ApplicationReport UserReport { get; set; }
 
 		[BindProperty]
 		public bool IsAdmin { get; set; } = false;
@@ -50,6 +56,8 @@ namespace NVD.Developer.Web.Pages.Applications
 				else
 				{
 					ApplicationItem = applicationItem;
+					UserReport = new ApplicationReport();
+					UserReport.ApplicationName = ApplicationItem.DisplayName;
 				}
 			}
 
@@ -117,8 +125,28 @@ namespace NVD.Developer.Web.Pages.Applications
 				}
 				else
 				{
-					//report on the application, based on user input
-					HttpContext.Session.SetString("Notification", "Your report was received and sent to the appropriate personnel.");
+					ModelState.Clear();
+					UserReport.UserId = userId;
+					UserReport.DateCreated = DateTime.Now;
+					UserReport.DateUpdated = DateTime.Now;
+					if (!TryValidateModel(UserReport, nameof(UserReport)))
+					{
+						HttpContext.Session.SetString("Error", "The application report did not pass validation and was not created.");
+						return Page();
+					}
+					if (UserReport != null)
+					{
+						var newApp = await _applicationReportService.SaveUpdateItem(UserReport);
+						if (newApp != null && newApp.Id > 0)
+						{
+							HttpContext.Session.SetString("Notification", "Your report was received and sent to the appropriate personnel.");
+						}
+						else
+						{
+							HttpContext.Session.SetString("Error", "The application report was not created correctly.");
+						}
+					}
+					return RedirectToPage(new { id = appId });
 				}
 			}
 			else

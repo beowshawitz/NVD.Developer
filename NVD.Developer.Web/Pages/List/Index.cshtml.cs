@@ -130,18 +130,6 @@ namespace NVD.Developer.Web.Pages.List
                         var list = ProcessForm(Request.Form, MyList);
 						List<string> scripts = await _myAppListService.GenerateScript(list);
 						GeneratedScript = PostProcess(scripts);
-						//if (listIds == null)
-      //                  {
-      //                      List<string> scripts = await _myAppListService.GenerateScript(MyList.ToList());
-						//	GeneratedScript = PostProcess(scripts);
-      //                  }
-      //                  else
-      //                  {
-      //                      //get scripts from listIds
-      //                      int[] array = listIds.Split(',').Select(int.Parse).ToArray();
-						//	List<string> scripts = await _myAppListService.GenerateScript(MyList.Where(x => array.Contains(x.Id)).ToList());
-						//	GeneratedScript = PostProcess(scripts);
-						//}
 						HttpContext.Session.SetString("Notification", $"The requested scripts have been generated.");
                     }
                 }
@@ -188,6 +176,7 @@ namespace NVD.Developer.Web.Pages.List
                 appItem.ApplyInstallAsFromForm(form[$"installAs_{appItem.Id}"]);
 				appItem.ApplyInstallModeFromForm(form["installMode"]);
 				appItem.ApplyUninstallPreviousFromForm(form[$"uninstallPrev_{appItem.Id}"]);
+				appItem.ApplyAcceptAgreementsFromForm(form[$"acceptAgreements_{appItem.Id}"]);
 			}
 		}
 

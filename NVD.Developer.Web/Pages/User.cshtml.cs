@@ -15,16 +15,21 @@ namespace NVD.Developer.Web.Pages
 		private readonly ILogger<UserModel> _logger;
 		private readonly GraphApiClient _graphApiClient;
 		private readonly ApplicationRequestService _applicationRequestService;
+		private readonly ApplicationReportService _applicationReportService;
 		public User CurrentUser { get; set; } = default!;
 		public AuthenticatedUserData IdentityPrincipalData { get; set; } = default!;
 		public IList<ApplicationRequest>? AppRequests { get; set; }
 
-		public UserModel(ILogger<UserModel> logger, GraphApiClient graphApiClient, ApplicationRequestService applicationRequestService)
+		public IList<ApplicationReport>? AppReports { get; set; }
+
+		public UserModel(ILogger<UserModel> logger, GraphApiClient graphApiClient, ApplicationRequestService applicationRequestService, ApplicationReportService applicationReportService)
 		{
 			_logger = logger;
 			_graphApiClient = graphApiClient;
 			_applicationRequestService = applicationRequestService;
 			AppRequests = new List<ApplicationRequest>();
+			AppReports = new List<ApplicationReport>();
+			_applicationReportService = applicationReportService;
 		}
 
 		public async Task<IActionResult> OnGet()
@@ -32,6 +37,7 @@ namespace NVD.Developer.Web.Pages
 			GetIdentityPrincipalInformation();
 			await GetCurrentUserGraphInformation();
 			await GetApplicationRequests();
+			await GetApplicationReports();
 			return Page();
 		}
 
@@ -46,7 +52,22 @@ namespace NVD.Developer.Web.Pages
 			}
 			catch (Exception ex)
 			{
-				_logger.Log(LogLevel.Error, $"Error retrieving Graph user list, {ex}");
+				_logger.Log(LogLevel.Error, $"Error retrieving application request list for the user, {ex}");
+			}
+		}
+
+		private async Task GetApplicationReports()
+		{
+			try
+			{
+				if (CurrentUser != null && !string.IsNullOrEmpty(CurrentUser.Id))
+				{
+					AppReports = await _applicationReportService.GetUserApplicationReports(CurrentUser.Id);
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.Log(LogLevel.Error, $"Error retrieving application report list for the user, {ex}");
 			}
 		}
 

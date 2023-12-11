@@ -31,6 +31,8 @@ namespace NVD.Developer.Core.Models
 
 		[NotMapped]
 		public bool UninstallPrevious { get; set; }
+		[NotMapped]
+		public bool AcceptAgreements { get; set; }
 
 		public ApplicationListItem() 
 		{ 
@@ -95,6 +97,18 @@ namespace NVD.Developer.Core.Models
 			}
 		}
 
+		public void ApplyAcceptAgreementsFromForm(string value)
+		{
+			if (!string.IsNullOrEmpty(value) && (value.Equals("checked", StringComparison.InvariantCultureIgnoreCase) || value.Equals("true", StringComparison.InvariantCultureIgnoreCase)))
+			{
+				AcceptAgreements = true;
+			}
+			else
+			{
+				AcceptAgreements = false;
+			}
+		}
+
 		public string GenerateScript()
 		{
 			StringBuilder script = new StringBuilder();
@@ -121,7 +135,11 @@ namespace NVD.Developer.Core.Models
 				{
 					script.Append($"--scope user ");
 				}
-				if(UninstallPrevious)
+				if (AcceptAgreements)
+				{
+					script.Append($"--accept-package-agreements --accept-source-agreements ");
+				}
+				if (UninstallPrevious)
 				{
 					script.Append($"--uninstall-previous ");
 				}

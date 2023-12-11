@@ -2,10 +2,7 @@
 (
 	[Id] INT IDENTITY (1, 1) NOT NULL,
     [StatusId] INT NOT NULL,
-    [UserId] VARCHAR(255) NOT NULL, 
-    [DisplayName] VARCHAR(250) NOT NULL, 
-    [ContactNumber] VARCHAR(250) NOT NULL, 
-    [ContactEmail] VARCHAR(250) NOT NULL, 
+    [UserId] VARCHAR(255) NOT NULL,
     [ApplicationName] VARCHAR(250) NOT NULL, 
     [ApplicationVersion] VARCHAR(150) NULL, 
     [RequestingReason] VARCHAR(MAX) NOT NULL, 

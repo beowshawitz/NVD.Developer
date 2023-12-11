@@ -6,21 +6,21 @@ using NVD.Developer.Core.Models;
 using NVD.Developer.Web.Graph;
 using NVD.Developer.Web.Services;
 
-namespace NVD.Developer.Web.Pages.Admin.ApplicationRequests
+namespace NVD.Developer.Web.Pages.Admin.ApplicationReports
 {
     public class IndexModel : PageModel
     {
 		private readonly ILogger<IndexModel> _logger;
-		private readonly ApplicationRequestService _applicationRequestService;
+		private readonly ApplicationReportService _applicationReportService;
 		private readonly GraphApiClient _graphApiClient;
 
-		public IndexModel(ILogger<IndexModel> logger, ApplicationRequestService applicationRequestService, GraphApiClient graphApiClient)
+		public IndexModel(ILogger<IndexModel> logger, ApplicationReportService applicationReportService, GraphApiClient graphApiClient)
 		{
 			_logger = logger;
-			_applicationRequestService = applicationRequestService;
+			_applicationReportService = applicationReportService;
 			_graphApiClient = graphApiClient;
 			PageSubmission = new PageSubmission(CurrentPage);
-			PageResult = new AppReqPageResult(CurrentPage, 0);
+			PageResult = new AppReportPageResult(CurrentPage, 0);
 		}
 
 		[BindProperty(SupportsGet = true)]
@@ -30,23 +30,23 @@ namespace NVD.Developer.Web.Pages.Admin.ApplicationRequests
 		public PageSubmission PageSubmission { get; set; }
 
 		[BindProperty]
-		public AppReqPageResult? PageResult { get; set; }
+		public AppReportPageResult? PageResult { get; set; }
 
 		public async Task<IActionResult> OnGetAsync()
 		{
 			PageSubmission = new PageSubmission(CurrentPage);
 			try
 			{
-				PageResult = await _applicationRequestService.GetApplicationRequests(PageSubmission);
+				PageResult = await _applicationReportService.GetApplicationReports(PageSubmission);
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError("An error occurred while requesting the application request list.", ex);
+				_logger.LogError("An error occurred while requesting the application report list.", ex);
 				HttpContext.Session.SetString("Error", "The page request could not be completed. Please contact support if this continues to occur.");
 			}
 			if (PageResult == null)
 			{
-				PageResult = new AppReqPageResult(PageSubmission.PageSize, PageSubmission.Start);
+				PageResult = new AppReportPageResult(PageSubmission.PageSize, PageSubmission.Start);
 			}
 			else
 			{
@@ -64,16 +64,16 @@ namespace NVD.Developer.Web.Pages.Admin.ApplicationRequests
 
 			try
 			{
-				PageResult = await _applicationRequestService.GetApplicationRequests(PageSubmission);
+				PageResult = await _applicationReportService.GetApplicationReports(PageSubmission);
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError("An error occurred while requesting the application request list.", ex);
+				_logger.LogError("An error occurred while requesting the application report list.", ex);
 				HttpContext.Session.SetString("Error", "The page request could not be completed. Please contact support if this continues to occur.");
 			}
 			if (PageResult == null)
 			{
-				PageResult = new AppReqPageResult(PageSubmission.PageSize, PageSubmission.Start);
+				PageResult = new AppReportPageResult(PageSubmission.PageSize, PageSubmission.Start);
 			}
 			else
 			{
@@ -82,25 +82,25 @@ namespace NVD.Developer.Web.Pages.Admin.ApplicationRequests
 			return Page();
 		}
 
-		private async Task PostProcessPageResultAsync(AppReqPageResult pageResult)
+		private async Task PostProcessPageResultAsync(AppReportPageResult pageResult)
 		{
-			foreach(var item in pageResult.Requests)
+			foreach (var item in pageResult.Reports)
 			{
 				await PopulateUserInformationAsync(item);
 			}
 		}
 
-		private async Task PopulateUserInformationAsync(ApplicationRequest request)
+		private async Task PopulateUserInformationAsync(ApplicationReport report)
 		{
-			if (request != null)
+			if (report != null)
 			{
 				try
 				{
-					User? requestor = await _graphApiClient.GetGraphApiUser(request.UserId);
+					User? requestor = await _graphApiClient.GetGraphApiUser(report.UserId);
 					if (requestor != null)
 					{
-						request.UserName = requestor.DisplayName;
-						request.UserContactEmail = requestor.Mail;
+						report.UserName = requestor.DisplayName;
+						report.UserContactEmail = requestor.Mail;
 					}
 				}
 				catch (Exception ex)

@@ -131,8 +131,9 @@ namespace NVD.Developer.Web
 			builder.Services.AddHttpClient<ApplicationVersionService>();
 			builder.Services.AddHttpClient<MyListService>();
 			builder.Services.AddHttpClient<ApplicationRequestService>();
+            builder.Services.AddHttpClient<ApplicationReportService>();
 
-			builder.Services.ConfigureApplicationCookie(options =>
+            builder.Services.ConfigureApplicationCookie(options =>
 			{
 				// Cookie settings
 				options.Cookie.HttpOnly = builder.Configuration.GetValue<bool>("SiteSettings:HttpOnly");

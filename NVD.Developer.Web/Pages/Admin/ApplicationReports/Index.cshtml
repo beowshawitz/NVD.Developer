@@ -1,7 +1,7 @@
 ﻿@page
-@model NVD.Developer.Web.Pages.Admin.ApplicationRequests.IndexModel
+@model NVD.Developer.Web.Pages.Admin.ApplicationReports.IndexModel
 @{
-	ViewData["Title"] = "Application Request Listing";
+	ViewData["Title"] = "Application Report Listing";
 }
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
 	<symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
@@ -21,11 +21,11 @@
 		<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
 	</symbol>
 </svg>
-<section class="py-5 text-center container" style="background: url('/images/admin-requests.jpg');  background-repeat: no-repeat; background-size: 100% 100%;">
+<section class="py-5 text-center container" style="background: url('/images/admin-reports.jpg');  background-repeat: no-repeat; background-size: 100% 100%;">
 	<div class="row py-lg-5">
 		<div class="col-md-8 mx-auto text-light">
-			<h1 class="fw-light">Application Requests</h1>
-			<p class="lead">Simply browse the submitted application requests and process them as needed.</p>
+			<h1 class="fw-light">Application Reports</h1>
+			<p class="lead">Simply browse the submitted application reports and process them as applicable.</p>
 		</div>
 	</div>
 </section>
@@ -91,7 +91,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (var req in Model.PageResult.Requests)
+					@foreach (var req in Model.PageResult.Reports)
 					{
 						<tr>
 							<td>@req.UserName</td>
@@ -99,18 +99,18 @@
 							<td>@req.Status.StatusName</td>
 							<td>@req.DateCreated</td>
 							<td>@req.DateUpdated</td>
-							<td><a class="btn btn-sm btn-outline-secondary" href="/Admin/ApplicationRequests/Item?id=@req.Id">View</a></td>
+							<td><a class="btn btn-sm btn-outline-secondary" href="/Admin/ApplicationReports/Item?id=@req.Id">View</a></td>
 						</tr>
 					}
 				</tbody>
 			</table>
 		</div>
-		@if (Model.PageResult.ItemCount.Equals(0) || Model.PageResult.Requests == null || Model.PageResult.Requests.Count().Equals(0))
+		@if (Model.PageResult.ItemCount.Equals(0) || Model.PageResult.Reports == null || Model.PageResult.Reports.Count().Equals(0))
 		{
 			<div class="row justify-content-md-center mt-4">
 				<div class="col-8">
 					<div class="bs-callout bs-callout-info">
-						There were no application requests to display.
+						There were no application reports to display.
 					</div>
 				</div>
 			</div>

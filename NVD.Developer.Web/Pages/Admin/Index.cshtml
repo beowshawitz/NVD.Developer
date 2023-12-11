@@ -58,10 +58,13 @@
         <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z" />
         <path d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8m0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0M4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0" />
     </symbol>
+    <symbol id="bi-flag" viewBox="0 0 16 16">
+        <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12.435 12.435 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A19.626 19.626 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a19.587 19.587 0 0 0 1.349-.476l.019-.007.004-.002h.001M14 1.221c-.22.078-.48.167-.766.255-.81.252-1.872.523-2.734.523-.886 0-1.592-.286-2.203-.534l-.008-.003C7.662 1.21 7.139 1 6.5 1c-.669 0-1.606.229-2.415.478A21.294 21.294 0 0 0 3 1.845v6.433c.22-.078.48-.167.766-.255C4.576 7.77 5.638 7.5 6.5 7.5c.847 0 1.548.28 2.158.525l.028.01C9.32 8.29 9.86 8.5 10.5 8.5c.668 0 1.606-.229 2.415-.478A21.317 21.317 0 0 0 14 7.655V1.222z" />
+    </symbol>
 </svg>
 <section class="py-5 text-center container" style="background: url('/images/admin.jpg');  background-repeat: no-repeat; background-size: 100% 100%;">
 	<div class="row py-lg-5">
-		<div class="col-lg-6 col-md-8 mx-auto text-light">
+		<div class="col-md-8 mx-auto text-light">
 			<h1 class="fw-light">Administration Options</h1>
 			<p class="lead">Administrators are able to perform a few operations for maintenance.</p>
 		</div>
@@ -69,7 +72,6 @@
 </section>
 
 <div class="container px-4 py-5" id="hanging-icons">
-    <h2 class="pb-2 border-bottom">Administrator's can:</h2>
     <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
         <div class="col d-flex align-items-start">
             <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
@@ -97,8 +99,18 @@
             </div>
             <div>
                 <h3 class="fs-2 text-body-emphasis">Application Requests</h3>
-                <p>When a user has found a missing application, he/she may have submitted an electronic request for the application. This listing will present all those requests for an admin to review and perform.</p>
+                <p>When a user has found a missing application, he/she may have submitted an electronic request for the application. This listing will present all those requests for an admin to review and consider.</p>
                 <a href="/Admin/ApplicationRequests/Index" class="btn btn-outline-secondary">Go</a>
+            </div>
+        </div>
+        <div class="col d-flex align-items-start">
+            <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
+                <svg class="bi" width="1em" height="1em"><use xlink:href="#bi-flag"></use></svg>
+            </div>
+            <div>
+                <h3 class="fs-2 text-body-emphasis">Application Reports</h3>
+                <p>When a user has found a problem with an application, he/she may have submitted an electronic report for the application. This listing will present all those reports for an admin to review and perform action on them.</p>
+                <a href="/Admin/ApplicationReports/Index" class="btn btn-outline-secondary">Go</a>
             </div>
         </div>
     </div>

@@ -150,16 +150,25 @@
 <div class="modal fade" id="reportAppModal" tabindex="-1" aria-labelledby="reportAppModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<form method="post" asp-page-handler="ReportApp">
+			<form method="post" asp-page-handler="ReportApp" asp-route-appId="@Model.ApplicationItem.Id">
 				<div class="modal-header">
 					<h1 class="modal-title fs-5" id="reportAppModalLabel">Report this App</h1>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<input type="hidden" name="appId" value="@Model.ApplicationItem.Id" />
 					<div class="mb-3">
-						<label for="reportingDescription" class="form-label">Description</label>
-						<textarea id="reportingDescription" name="reportingDescription" class="form-control" placeholder="Describe why this application is being reported" aria-label="Describe why this application is being reported"></textarea>
+						<label asp-for="UserReport.ApplicationName" class="form-label"></label>
+						<input type="text" asp-for="UserReport.ApplicationName" class="form-control" placeholder="Enter the name of an application" aria-label="Enter the name of an application." readonly />
+						<span asp-validation-for="UserReport.ApplicationName" class="text-danger"></span>
+					</div>
+					<div class="mb-3">
+						<label asp-for="UserReport.ApplicationVersion" class="form-label"></label>
+						<input type="text" asp-for="UserReport.ApplicationVersion" class="form-control" placeholder="Enter a version number like '1.0'" aria-label="Enter a version number like '1.0'" readonly />
+					</div>
+					<div class="mb-3">
+						<label asp-for="UserReport.Description" class="form-label"></label>
+						<textarea asp-for="UserReport.Description" class="form-control" placeholder="Describe why this application is being reported" aria-label="Describe why this application is being reported"></textarea>
+						<span asp-validation-for="UserReport.Description" class="text-danger"></span>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -177,7 +186,8 @@
 		$(document).ready(function () {
 			$(".toast").toast('show');
 			$("#versionSelector").change(function () {
-				$('#itemActions input[name="versionId"]').val($(this).val());
+				$('#itemActions input[name="versionId"]').val($("option:selected", $(this)).val());
+				$('#reportAppModal input[name="UserReport.ApplicationVersion"]').val($("option:selected", $(this)).text());
 			});
 			$(".addAppToList").click(function () {
 				$(this).text("Loading...").prepend("<span class=\"spinner-grow spinner-grow-sm mx-2\"></span>").addClass("disabled");

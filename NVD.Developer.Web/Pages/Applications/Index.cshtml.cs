@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Identity.Web;
 using Newtonsoft.Json;
 using NVD.Developer.Core;
+using NVD.Developer.Core.Models;
+using NVD.Developer.Web.Authorization;
 using NVD.Developer.Web.Services;
 using System.Security.Claims;
 
@@ -13,14 +15,16 @@ namespace NVD.Developer.Web.Pages.Applications
     {
         private readonly ILogger<IndexModel> _logger;
         private readonly ApplicationService _applicationService;
-        private readonly MyListService _myAppListService;
+		private readonly ApplicationRequestService _applicationRequestService;
+		private readonly MyListService _myAppListService;
 
-		public IndexModel(ILogger<IndexModel> logger, MyListService myAppListService, ApplicationService applicationService)
+		public IndexModel(ILogger<IndexModel> logger, MyListService myAppListService, ApplicationService applicationService, ApplicationRequestService applicationRequestService)
 		{
 			_logger = logger;
 			_myAppListService = myAppListService;
 			_applicationService = applicationService;
 			PageResult = new AppPageResult(CurrentPage, 0);
+			_applicationRequestService = applicationRequestService;	
 		}
 
 		[BindProperty(SupportsGet = true)]
@@ -31,6 +35,9 @@ namespace NVD.Developer.Web.Pages.Applications
 
 		[BindProperty]
         public AppPageResult PageResult { get; set; }
+
+		[BindProperty]
+		public ApplicationRequest UserRequest { get; set; }
 
 		public async Task<IActionResult> OnGetAsync()
         {
@@ -53,7 +60,8 @@ namespace NVD.Developer.Web.Pages.Applications
 
 		public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+			ModelState.Clear();
+            if (!TryValidateModel(PageSubmission, nameof(PageSubmission)))
             {
                 return Page();
             }
@@ -96,6 +104,37 @@ namespace NVD.Developer.Web.Pages.Applications
 						HttpContext.Session.SetString("Notification", $"{app.DisplayName} was added to your list.");
                     }
                 }
+			}
+			return RedirectToPage();
+		}
+
+		public async Task<IActionResult> OnPostRequestAppAsync()
+		{
+			ModelState.Clear();
+			var userId = GetUserId();
+			if(!string.IsNullOrEmpty(userId))
+			{
+				UserRequest.UserId = userId;
+			}			
+			UserRequest.DateCreated = DateTime.Now;
+			UserRequest.DateUpdated = DateTime.Now;
+			if (!TryValidateModel(UserRequest, nameof(UserRequest)))
+			{
+				HttpContext.Session.SetString("Error", "The application request did not pass validation and was not created.");
+				return Page();
+			}
+			if (UserRequest != null)
+			{
+				var newApp = await _applicationRequestService.SaveUpdateItem(UserRequest);
+				if (newApp != null && newApp.Id > 0)
+				{
+					HttpContext.Session.SetString("Notification", $"Your application request was received and will be processed.");
+					return RedirectToPage("/Applications/Index");
+				}
+				else
+				{
+					HttpContext.Session.SetString("Error", "The application request was not created correctly.");
+				}
 			}
 			return RedirectToPage();
 		}

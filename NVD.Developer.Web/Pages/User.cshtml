@@ -51,18 +51,33 @@
 			</div>
 		</div>
 		<div class="col-4">
-			<div class="card">
-				<div class="card-header">
-					Application Requests
+			<nav>
+				<div class="nav nav-tabs" id="user-tabs" role="tablist">
+					<button class="nav-link active" id="nav-request-tab" data-bs-toggle="tab" data-bs-target="#nav-request" type="button" role="tab" aria-controls="nav-request" aria-selected="true">Requests</button>
+					<button class="nav-link" id="nav-report-tab" data-bs-toggle="tab" data-bs-target="#nav-report" type="button" role="tab" aria-controls="nav-report" aria-selected="false">Reports</button>
 				</div>
-				<div class="card-body">
+			</nav>
+			<div class="tab-content" id="nav-tabContent">
+				<div class="tab-pane fade show active" id="nav-request" role="tabpanel" aria-labelledby="nav-request-tab" tabindex="0">
 					<div class="list-group">
-						@foreach (var req in Model.AppRequests)
+						@foreach (var item in Model.AppRequests)
 						{
 							<a href="javascript:void(0);" class="list-group-item">
-								<div><strong>@req.ApplicationName</strong></div>
-								<div><small>Updated: @req.GetPrettyDateUpdated()</small></div>
-								<div><small>Status: <span class="badge text-bg-secondary">@req.Status.StatusName</span></small></div>
+								<div><strong>@item.ApplicationName</strong></div>
+								<div><small>Updated: @item.GetPrettyDateUpdated()</small></div>
+								<div><small>Status: <span class="badge text-bg-secondary">@item.Status.StatusName</span></small></div>
+							</a>
+						}
+					</div>
+				</div>
+				<div class="tab-pane fade" id="nav-report" role="tabpanel" aria-labelledby="nav-report-tab" tabindex="0">
+					<div class="list-group">
+						@foreach (var item in Model.AppReports)
+						{
+							<a href="javascript:void(0);" class="list-group-item">
+								<div><strong>@item.ApplicationName</strong></div>
+								<div><small>Updated: @item.GetPrettyDateUpdated()</small></div>
+								<div><small>Status: <span class="badge text-bg-secondary">@item.Status.StatusName</span></small></div>
 							</a>
 						}
 					</div>

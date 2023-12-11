@@ -70,6 +70,8 @@
     <Build Include="nvddev\Tables\ApplicationVersions.sql" />
     <Build Include="nvddev\Tables\ApplicationRequests.sql" />
     <Build Include="nvddev\Tables\ApplicationRequestStatus.sql" />
+    <Build Include="nvddev\Tables\ApplicationReports.sql" />
+    <Build Include="nvddev\Tables\ApplicationReportStatus.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="nvddev\Schemas\NVDDeveloperSchema.sql" />

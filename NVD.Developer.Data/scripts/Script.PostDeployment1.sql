@@ -25,6 +25,18 @@ USING (Values
 		INSERT([Id],[StatusName]) VALUES(Source.[Id], Source.[StatusName]);
 SET IDENTITY_INSERT [nvddev].[ApplicationRequestStatus] OFF
 
+SET IDENTITY_INSERT [nvddev].[ApplicationReportStatus] ON
+MERGE INTO [nvddev].[ApplicationReportStatus] AS Target 
+USING (Values
+	(1, 'Submitted'),
+	(2, 'Acknowledged')
+) AS Source([Id],[StatusName]) ON (Target.[Id] = Source.[Id])
+	WHEN MATCHED THEN 
+		UPDATE SET [StatusName] = Source.[StatusName]
+	WHEN NOT MATCHED BY TARGET THEN
+		INSERT([Id],[StatusName]) VALUES(Source.[Id], Source.[StatusName]);
+SET IDENTITY_INSERT [nvddev].[ApplicationReportStatus] OFF
+
 IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = 'db_nvddev_reader' AND type = 'R')
 BEGIN
     CREATE ROLE db_nvddev_reader;

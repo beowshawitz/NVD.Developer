@@ -17,6 +17,8 @@ namespace NVD.Developer.Core.Data
 		public DbSet<ApplicationListItem> ApplicationLists { get; set; } = null!;
 		public DbSet<ApplicationRequestStatus> ApplicationRequestStatus { get; set; } = null!;
 		public DbSet<ApplicationRequest> ApplicationRequests { get; set; } = null!;
+		public DbSet<ApplicationReportStatus> ApplicationReportStatus { get; set; } = null!;
+		public DbSet<ApplicationReport> ApplicationReports { get; set; } = null!;
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Graph.Models;
 using NVD.Developer.Core.Models;
 using NVD.Developer.Web.Graph;
 using NVD.Developer.Web.Services;
@@ -9,11 +10,15 @@ namespace NVD.Developer.Web.Pages.Admin.ApplicationRequests
     public class ItemModel : PageModel
     {
 		private readonly ApplicationRequestService _applicationRequestService;
+		private readonly GraphApiClient _graphApiClient;
+		private readonly ILogger<ItemModel> _logger;
 
-		public ItemModel(ApplicationRequestService applicationRequestService)
+		public ItemModel(ApplicationRequestService applicationRequestService, GraphApiClient graphApiClient, ILogger<ItemModel> logger)
 		{
 			UserRequest = new ApplicationRequest();
 			_applicationRequestService = applicationRequestService;
+			_graphApiClient = graphApiClient;
+			_logger = logger;
 		}
 
 		[BindProperty]
@@ -37,6 +42,7 @@ namespace NVD.Developer.Web.Pages.Admin.ApplicationRequests
 				else
 				{
 					UserRequest = requestItem;
+					await PopulateUserInformationAsync(UserRequest);
 				}
 				RequestStatusItems = await _applicationRequestService.GetStatusItems();
 			}
@@ -92,6 +98,26 @@ namespace NVD.Developer.Web.Pages.Admin.ApplicationRequests
 			else
 			{
 				return RedirectToPage("/Admin/ApplicationRequests/Index");
+			}
+		}
+
+		public async Task PopulateUserInformationAsync(ApplicationRequest request)
+		{
+			if (request != null)
+			{
+				try
+				{
+					User? requestor = await _graphApiClient.GetGraphApiUser(request.UserId);
+					if(requestor != null)
+					{
+						request.UserName = requestor.DisplayName;
+						request.UserContactEmail = requestor.Mail;
+					}
+				}
+				catch (Exception ex)
+				{
+					_logger.Log(LogLevel.Error, $"Error retrieving Graph user, {ex}");
+				}
 			}
 		}
 	}
