@@ -68,6 +68,12 @@
 								<div><small>Status: <span class="badge text-bg-secondary">@item.Status.StatusName</span></small></div>
 							</a>
 						}
+						@if (Model.AppRequests == null || Model.AppRequests.Count().Equals(0))
+						{
+							<div class="bs-callout bs-callout-info">
+								You have not submitted any requests for applications.
+							</div>
+						}
 					</div>
 				</div>
 				<div class="tab-pane fade" id="nav-report" role="tabpanel" aria-labelledby="nav-report-tab" tabindex="0">
@@ -79,6 +85,12 @@
 								<div><small>Updated: @item.GetPrettyDateUpdated()</small></div>
 								<div><small>Status: <span class="badge text-bg-secondary">@item.Status.StatusName</span></small></div>
 							</a>
+						}
+						@if (Model.AppReports == null || Model.AppReports.Count().Equals(0))
+						{
+							<div class="bs-callout bs-callout-info">
+								You have not submitted any application reports.
+							</div>
 						}
 					</div>
 				</div>

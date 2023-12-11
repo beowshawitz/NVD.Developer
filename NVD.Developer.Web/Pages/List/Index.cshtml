@@ -68,41 +68,41 @@
 						else
 						{
 							<ul class="list-group list-group-flush">
-								@foreach (var appListItem in Model.MyList)
+								@for (int i = 0; i < Model.MyList.Count(); i++)
 								{
-									var app = appListItem.Application;
 									<li class="list-group-item d-flex align-items-center">
 										<div class="flex-grow-1">
-											<input class="form-check-input me-1" type="checkbox" data-val="true" value="true" id="appChk_@appListItem.Id" name="appChk_@appListItem.Id" title="Check this to include this application in the script generation." />											
-											<label class="form-check-label" for="appChk_@appListItem.Id">@app.DisplayName</label>
-											@if (appListItem.Version != null && !string.IsNullOrEmpty(appListItem.Version.Name))
+											<input type="hidden" asp-for="@Model.MyList[i].Id" />
+											<input class="form-check-input me-1" type="checkbox" asp-for="@Model.MyList[i].IsSelected" value="true" title="Check this to include this application in the script generation." />
+											<label class="form-check-label" asp-for="@Model.MyList[i].IsSelected">@Model.MyList[i].Application.DisplayName</label>
+											@if (Model.MyList[i].Version != null && !string.IsNullOrEmpty(Model.MyList[i].Version.Name))
 											{
 												<strong class="ms-4"><small>Version</small></strong>
-												<span class="badge text-bg-secondary ms-2">@appListItem.Version.Name</span>
+												<span class="badge text-bg-secondary ms-2">@Model.MyList[i].Version.Name</span>
 											}
-											<small class="d-block text-body-secondary ms-4">@app.Description</small>
+											<small class="d-block text-body-secondary ms-4">@Model.MyList[i].Application.Description</small>
 											<strong class="ms-4 me-2"><small>Install As:</small></strong>
 											<div class="form-check form-switch form-check-inline">
-												<input class="form-check-input" type="radio" role="switch" name="installAs_@appListItem.Id" id="installAs_@appListItem.Id" value="U" checked title="Check this to install this application as the logged in user." />
-												<label class="form-check-label" for="installAs_@appListItem.Id">User</label>
+												<input class="form-check-input" type="radio" role="switch" asp-for="@Model.MyList[i].InstallType" checked value="U" title="Check this to install this application as the logged in user." />
+												<label class="form-check-label" asp-for="@Model.MyList[i].InstallType">User</label>
 											</div>
 											<div class="form-check form-switch form-check-inline">
-												<input class="form-check-input" type="radio" role="switch" name="installAs_@appListItem.Id" id="installAs_@appListItem.Id" value="S" title="Check this to install this application as the system." />
-												<label class="form-check-label" for="installAs_@appListItem.Id">System</label>
+												<input class="form-check-input" type="radio" role="switch" asp-for="@Model.MyList[i].InstallType" value="S" title="Check this to install this application as the system." />
+												<label class="form-check-label" asp-for="@Model.MyList[i].InstallType">System</label>
 											</div>
 											<strong class="ms-4 me-2"><small>Uninstall Previous:</small></strong>
 											<div class="form-check form-switch form-check-inline">
-												<input class="form-check-input" type="checkbox" role="switch" name="uninstallPrev_@appListItem.Id" data-val="true" value="true" id="uninstallPrev_@appListItem.Id" title="Check this to uninstall the previous version of the package during upgrade." />
-												<label class="form-check-label" for="uninstallPrev_@appListItem.Id"></label>
+												<input class="form-check-input" type="checkbox" role="switch" asp-for="@Model.MyList[i].UninstallPrevious" value="true" title="Check this to uninstall the previous version of the package during upgrade." />
+												<label class="form-check-label" asp-for="@Model.MyList[i].UninstallPrevious"></label>
 											</div>
 											<strong class="ms-4 me-2"><small>Accept Agreements:</small></strong>
 											<div class="form-check form-switch form-check-inline">
-												<input class="form-check-input" type="checkbox" role="switch" name="acceptAgreements_@appListItem.Id" data-val="true" value="true" id="acceptAgreements_@appListItem.Id" title="Check this to accept the source license agreement, and avoid the prompt." />
-												<label class="form-check-label" for="acceptAgreements_@appListItem.Id"></label>
+												<input class="form-check-input" type="checkbox" role="switch" asp-for="@Model.MyList[i].AcceptAgreements" value="true" title="Check this to accept the source license agreement, and avoid the prompt." />
+												<label class="form-check-label" asp-for="@Model.MyList[i].AcceptAgreements"></label>
 											</div>
 										</div>
 										<div>
-											<button type="submit" asp-page-handler="RemoveFromCart" asp-route-appId="@app.Id" asp-route-versionId="@appListItem.VersionId" class="btn btn-sm btn-outline-danger removeAppFromList" title="Click to remove this item from your list.">
+											<button type="submit" asp-page-handler="RemoveFromCart" asp-route-appId="@Model.MyList[i].Application.Id" asp-route-versionId="@Model.MyList[i].VersionId" class="btn btn-sm btn-outline-danger removeAppFromList" title="Click to remove this item from your list.">
 												<svg class="bi" width="1em" height="1em"><use xlink:href="#bi-trash"></use></svg>
 											</button>
 										</div>
@@ -119,13 +119,16 @@
 											<li><a class="dropdown-item installModeItem" href="#" data-installmode="I">Interactive</a></li>
 											<li><a class="dropdown-item installModeItem" href="#" data-installmode="S">Silent</a></li>
 										</ul>
-										<input type="text" id="installModeSelection" class="form-control form-control-sm" value="Interactive" readonly aria-label="Installation Mode (silent or interactive)" />
-										<input type="hidden" id="installMode" name="installMode" value="I" />
+										<input type="text" asp-for="@Model.InstallModeDesc" class="form-control form-control-sm"  readonly aria-label="Installation Mode (silent or interactive)" />
+										<input type="hidden" asp-for="@Model.InstallMode" />
 									</div>
 								</div>
 								<div class="col">
 									<button type="submit" asp-page-handler="GenerateScript" class="btn btn-sm btn-outline-primary generateScriptFromList" title="Click to generate a script for the items on the list.">
 										<svg class="bi" width="1em" height="1em"><use xlink:href="#bi-archive"></use></svg> Generate Scripts
+									</button>
+									<button type="submit" asp-page-handler="CreatePS1" class="btn btn-outline-secondary btn-sm" title="Click to download a powershell script file with your app scripts.">
+										<svg class="bi" width="1em" height="1em"><use xlink:href="#bi-download"></use></svg> Download .ps1
 									</button>
 								</div>
 							</div>
@@ -146,12 +149,7 @@
 							<svg class="bi" width="1em" height="1em"><use xlink:href="#bi-clipboard"></use></svg>
 							Copy to Clipboard
 						</button>
-						<form method="post" asp-page-handler="CreatePS1" class="d-inline-flex ms-2">
-							<button type="submit" class="btn btn-outline-secondary btn-sm" title="Click to download a powershell script file with your app scripts." @((!string.IsNullOrEmpty(Model.GeneratedScript)) ? null : new { disabled = "disabled" })>
-								<svg class="bi" width="1em" height="1em"><use xlink:href="#bi-download"></use></svg>
-								Download .ps1
-							</button>
-						</form>
+						
 					</div>
 				</div>
 			</div>
@@ -164,8 +162,8 @@
 		$(document).ready(function () {
 			$(".toast").toast('show');
 			$("a.installModeItem").click(function () {
-				$("#installModeSelection").val($(this).text());
-				$("#installMode").val($(this).data("installmode"));
+				$("#InstallModeDesc").val($(this).text());
+				$("#InstallMode").val($(this).data("installmode"));
 			});
 			$(".removeAppFromList").click(function () {
 				$(this).text("Loading...").prepend("<span class=\"spinner-grow spinner-grow-sm mx-2\"></span>").addClass("disabled");

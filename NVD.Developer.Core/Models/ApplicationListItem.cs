@@ -5,8 +5,6 @@ using System.Text;
 
 namespace NVD.Developer.Core.Models
 {
-	public enum InstallAs { System, User };
-	public enum InstallMode { Silent, Interactive };
 	public class ApplicationListItem
 	{
 		public int Id { get; set; }
@@ -24,88 +22,76 @@ namespace NVD.Developer.Core.Models
 		public ApplicationVersion? Version { get; set; }
 
 		[NotMapped]
-		public InstallAs InstallType { get; set; }
+		public bool IsSelected { get; set; } = false;
 
 		[NotMapped]
-		public InstallMode InstallMode { get; set; }
+		public string InstallType { 
+			get
+			{
+				if (InstallAsUser)
+					return "U";
+				else 
+					return "S";
+			}
+			set
+			{ 
+				if(value.Equals("U", StringComparison.InvariantCultureIgnoreCase))
+				{
+					InstallAsUser = true;
+					InstallAsSystem = false;
+				}
+				if (value.Equals("S", StringComparison.InvariantCultureIgnoreCase))
+				{
+					InstallAsUser = false;
+					InstallAsSystem = true;
+				}
+			} 
+		}
+		[NotMapped]
+		public bool InstallAsSystem { get; set; } = false;
+		[NotMapped]
+		public bool InstallAsUser { get; set; } = true;
 
 		[NotMapped]
-		public bool UninstallPrevious { get; set; }
+		[Display(Name = "")]
+		public bool InstallInteractive { get; set; } = false;
 		[NotMapped]
-		public bool AcceptAgreements { get; set; }
+		[Display(Name = "")]
+		public bool InstallSilent { get; set; } = false;
+		[NotMapped]
+		[Display(Name = "")]
+		public bool UninstallPrevious { get; set; } = false;
+		[NotMapped]
+		[Display(Name = "")]
+		public bool AcceptAgreements { get; set; } = false;
 
 		public ApplicationListItem() 
 		{ 
 		}
 
-		public void ApplyInstallAsFromForm(string value)
+		public void ApplyUserSelections(ApplicationListItem? containsUserSelections, string installMode)
 		{
-			if(!string.IsNullOrEmpty(value))
+			if (containsUserSelections != null)
 			{
-				if (value.Equals("U", StringComparison.InvariantCultureIgnoreCase))
-				{
-					InstallType = InstallAs.User;
-				}
-				else if (value.Equals("S", StringComparison.InvariantCultureIgnoreCase))
-				{
-					InstallType = InstallAs.System;
-				}
-				else
-				{
-					InstallType = InstallAs.System;
-				}
+				this.IsSelected = containsUserSelections.IsSelected;
+				this.InstallType = containsUserSelections.InstallType;
+				this.InstallAsSystem = containsUserSelections.InstallAsSystem;
+				this.InstallAsUser = containsUserSelections.InstallAsUser;
+				this.UninstallPrevious = containsUserSelections.UninstallPrevious;
+				this.AcceptAgreements = containsUserSelections.AcceptAgreements;
 			}
-			else
+			if(!string.IsNullOrEmpty(installMode))
 			{
-				InstallType = InstallAs.System;
-			}
-			
-		}
-
-		public void ApplyInstallModeFromForm(string value)
-		{
-			if (!string.IsNullOrEmpty(value))
-			{
-				if (value.Equals("I", StringComparison.InvariantCultureIgnoreCase))
+				if(installMode.Equals("I", StringComparison.InvariantCultureIgnoreCase))
 				{
-					InstallMode = InstallMode.Interactive;
+					this.InstallSilent = false;
+					this.InstallInteractive = true;
 				}
-				else if (value.Equals("S", StringComparison.InvariantCultureIgnoreCase))
+				if (installMode.Equals("S", StringComparison.InvariantCultureIgnoreCase))
 				{
-					InstallMode = InstallMode.Silent;
+					this.InstallSilent = true;
+					this.InstallInteractive = false;
 				}
-				else
-				{
-					InstallMode = InstallMode.Silent;
-				}
-			}
-			else
-			{
-				InstallMode = InstallMode.Silent;
-			}			
-		}
-
-		public void ApplyUninstallPreviousFromForm(string value)
-		{
-			if (!string.IsNullOrEmpty(value) && (value.Equals("checked", StringComparison.InvariantCultureIgnoreCase) || value.Equals("true", StringComparison.InvariantCultureIgnoreCase)))
-			{
-				UninstallPrevious = true;
-			}
-			else
-			{
-				UninstallPrevious = false;
-			}
-		}
-
-		public void ApplyAcceptAgreementsFromForm(string value)
-		{
-			if (!string.IsNullOrEmpty(value) && (value.Equals("checked", StringComparison.InvariantCultureIgnoreCase) || value.Equals("true", StringComparison.InvariantCultureIgnoreCase)))
-			{
-				AcceptAgreements = true;
-			}
-			else
-			{
-				AcceptAgreements = false;
 			}
 		}
 
@@ -119,19 +105,19 @@ namespace NVD.Developer.Core.Models
 				{
 					script.Append($"-v \"{Version.Name}\" ");
 				}
-                if(InstallMode == InstallMode.Interactive)
+                if(InstallInteractive)
 				{
 					script.Append($"--interactive ");
 				}
-				if(InstallMode == InstallMode.Silent)
+				if(InstallSilent)
 				{
 					script.Append($"--silent ");
 				}
-				if(InstallType == InstallAs.System)
+				if(InstallAsSystem)
 				{
 					script.Append($"--scope machine ");
 				}
-				if (InstallType == InstallAs.User)
+				if (InstallAsUser)
 				{
 					script.Append($"--scope user ");
 				}

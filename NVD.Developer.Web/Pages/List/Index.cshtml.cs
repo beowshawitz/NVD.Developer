@@ -21,9 +21,14 @@ namespace NVD.Developer.Web.Pages.List
         }
 
         [BindProperty]
-        public IEnumerable<ApplicationListItem>? MyList { get; set; }
+        public List<ApplicationListItem>? MyList { get; set; }
 
-        [BindProperty]
+		[BindProperty]
+		public string InstallMode { get; set; } = "I";
+		[BindProperty]
+		public string InstallModeDesc { get; set; } = "Interactive";
+
+		[BindProperty]
         public string? GeneratedScript { get; set; } = string.Empty;
 
         public bool ContainsListItems
@@ -50,7 +55,11 @@ namespace NVD.Developer.Web.Pages.List
                 }
                 else
                 {
-                    MyList = await _myAppListService.GetList(userId);
+                    var list = await _myAppListService.GetList(userId);
+                    if(list != null)
+                    {
+                        MyList = list.ToList();
+                    }
                 }
             }
             catch (Exception ex)
@@ -110,77 +119,33 @@ namespace NVD.Developer.Web.Pages.List
 
         public async Task<IActionResult> OnPostGenerateScriptAsync()
         {
-			if (ModelState.IsValid)
-            {
-                var userId = GetUserId();
+            var userId = GetUserId();
 
-                if (userId == null)
+            if (userId == null)
+            {
+				HttpContext.Session.SetString("Error", "An user identifier for the list could not be determined.");
+            }
+            else
+            {
+				var list = await _myAppListService.GetList(userId);
+                if (list == null)
                 {
-					HttpContext.Session.SetString("Error", "An user identifier for the list could not be determined.");
+					HttpContext.Session.SetString("Error", "There were no applications in the user list to process.");
                 }
                 else
                 {
-					MyList = await _myAppListService.GetList(userId);
-                    if (MyList == null)
-                    {
-						HttpContext.Session.SetString("Error", "There were no applications in the user list to process.");
-                    }
-                    else
-                    {
-                        var list = ProcessForm(Request.Form, MyList);
-						List<string> scripts = await _myAppListService.GenerateScript(list);
-						GeneratedScript = PostProcess(scripts);
-						HttpContext.Session.SetString("Notification", $"The requested scripts have been generated.");
-                    }
-                }
+                    var updatedList = ApplyUserSelectionsToOriginalList(MyList, list);
+					var processedList = ProcessUserSelections(updatedList);
+					List<string> scripts = await _myAppListService.GenerateScript(processedList);
+					GeneratedScript = PostProcess(scripts);
+					HttpContext.Session.SetString("Notification", $"The requested scripts have been generated.");
+                    MyList = updatedList;
+				}
             }
 			return Page();
 		}
 
-        private List<ApplicationListItem> ProcessForm(IFormCollection form, IEnumerable<ApplicationListItem> appItems)
-        {
-			List<ApplicationListItem> results = new List<ApplicationListItem>();
-            List<int> checkedAppIds = GetCheckedAppItems(form, appItems);
-
-            if(checkedAppIds.Count > 0)
-            {
-				results = MyList.Where(x => checkedAppIds.Contains(x.Id)).ToList();
-			}
-            else
-            {
-                results = MyList.ToList();
-			}
-
-            ApplyFormSelections(form, results);
-
-            return results;
-		}
-
-        private List<int> GetCheckedAppItems(IFormCollection form, IEnumerable<ApplicationListItem> appItems)
-        {
-			List<int> checkedItems = new List<int>();
-            foreach(var appItem in appItems)
-            {
-                if (form[$"appChk_{appItem.Id}"] == "checked" || form[$"appChk_{appItem.Id}"] == "true")
-                {
-					checkedItems.Add(appItem.Id);
-				}
-            }
-            return checkedItems;
-		}
-
-		private void ApplyFormSelections(IFormCollection form, List<ApplicationListItem> appItems)
-		{
-			foreach (var appItem in appItems)
-			{
-                appItem.ApplyInstallAsFromForm(form[$"installAs_{appItem.Id}"]);
-				appItem.ApplyInstallModeFromForm(form["installMode"]);
-				appItem.ApplyUninstallPreviousFromForm(form[$"uninstallPrev_{appItem.Id}"]);
-				appItem.ApplyAcceptAgreementsFromForm(form[$"acceptAgreements_{appItem.Id}"]);
-			}
-		}
-
-		public async Task<IActionResult> OnPostCreatePS1Async(string? listIds)
+		public async Task<IActionResult> OnPostCreatePS1Async()
 		{
 			var userId = GetUserId();
 
@@ -190,33 +155,52 @@ namespace NVD.Developer.Web.Pages.List
 			}
 			else
 			{
-				MyList = await _myAppListService.GetList(userId);
-				if (MyList == null)
+				var list = await _myAppListService.GetList(userId);
+				if (list == null)
 				{
 					HttpContext.Session.SetString("Error", "There were no applications in the user list to process.");
 				}
 				else
 				{
-                    string scriptOutput = string.Empty;
-					if (listIds == null)
-					{
-						List<string> scripts = await _myAppListService.GenerateScript(MyList.ToList());
-						scriptOutput = PostProcess(scripts);
-					}
-					else
-					{
-						//get scripts from listIds
-						int[] array = listIds.Split(',').Select(int.Parse).ToArray();
-						List<string> scripts = await _myAppListService.GenerateScript(MyList.Where(x => array.Contains(x.Id)).ToList());
-						scriptOutput = PostProcess(scripts);
-					}
+					string scriptOutput = string.Empty;
+					var updatedList = ApplyUserSelectionsToOriginalList(MyList, list);
+					var processedList = ProcessUserSelections(updatedList);
+					List<string> scripts = await _myAppListService.GenerateScript(processedList);
+					scriptOutput = PostProcess(scripts);
 					HttpContext.Session.SetString("Notification", $"The requested scripts have been generated.");
-
+					MyList = updatedList;
 					return File(System.Text.Encoding.ASCII.GetBytes(scriptOutput), "application/octet-stream", "NVD.Dev.App.List.ps1");
 				}
 			}
 			return Page();
 		}
+
+		private List<ApplicationListItem> ApplyUserSelectionsToOriginalList(List<ApplicationListItem> userSelections, IEnumerable<ApplicationListItem> originalList)
+        {
+            foreach(var item in originalList) 
+            { 
+                item.ApplyUserSelections(userSelections.Find(x=>x.Id.Equals(item.Id)), InstallMode);
+            }
+            return originalList.ToList();
+
+		}
+
+		private List<ApplicationListItem> ProcessUserSelections(List<ApplicationListItem> appItems)
+        {
+			List<ApplicationListItem> results = new List<ApplicationListItem>();
+            List<int> checkedAppIds = appItems.Where(x=>x.IsSelected).Select(x=>x.Id).ToList();
+
+            if(checkedAppIds.Count > 0)
+            {
+				results = appItems.Where(x => checkedAppIds.Contains(x.Id)).ToList();
+			}
+            else
+            {
+                results = appItems.ToList();
+			}
+
+            return results;
+		}	
 
 		private string? GetUserId()
         {
