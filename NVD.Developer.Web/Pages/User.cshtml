@@ -62,7 +62,7 @@
 					<div class="list-group">
 						@foreach (var item in Model.AppRequests)
 						{
-							<a href="javascript:void(0);" class="list-group-item">
+							<a href="javascript:void(0);" class="list-group-item requestItem" data-id="@item.Id">
 								<div><strong>@item.ApplicationName</strong></div>
 								<div><small>Updated: @item.GetPrettyDateUpdated()</small></div>
 								<div><small>Status: <span class="badge text-bg-secondary">@item.Status.StatusName</span></small></div>
@@ -80,7 +80,7 @@
 					<div class="list-group">
 						@foreach (var item in Model.AppReports)
 						{
-							<a href="javascript:void(0);" class="list-group-item">
+							<a href="javascript:void(0);" class="list-group-item reportItem" data-id="@item.Id">
 								<div><strong>@item.ApplicationName</strong></div>
 								<div><small>Updated: @item.GetPrettyDateUpdated()</small></div>
 								<div><small>Status: <span class="badge text-bg-secondary">@item.Status.StatusName</span></small></div>
@@ -98,3 +98,86 @@
 		</div>
 	</div>
 </div>
+<div class="modal modal-lg fade" id="reportItemModal" tabindex="-1" aria-labelledby="reportItemModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="reportItemModalLabel">Application Report</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal modal-lg fade" id="requestItemModal" tabindex="-1" aria-labelledby="requestItemModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="requestItemModalLabel">Application Request</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<partial name="_toastPartial" />
+@section Scripts {
+	<script type="text/javascript" src="~/js/holder.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$(".toast").toast('show');
+			$("a.requestItem").click(function () {
+				GetApplicationRequest($(this).data("id"));
+			});
+			$("a.reportItem").click(function () {
+				GetApplicationReport($(this).data("id"));
+			});
+		});
+		function GetApplicationRequest(id) {
+			$.ajax({
+				url: '/APIs/AppRequest',
+				data: {
+					itemId: id
+				}
+			})
+				.done(function (result) {
+					if (result != null) {
+						$("#requestItemModal .modal-body").html(result);
+						$("#requestItemModal").modal('show');
+					}
+					else
+					{
+						CreateErrorToast("An error occurred while retrieving the application request.");
+					}
+				});
+		}
+		function GetApplicationReport(id) {
+			$.ajax({
+				url: '/APIs/AppReport',
+				data: {
+					itemId: id
+				}
+			})
+				.done(function (result) {
+					if (result != null) {
+						$("#reportItemModal .modal-body").html(result);
+						$("#reportItemModal").modal('show');
+					}
+					else
+					{
+						CreateErrorToast("An error occurred while retrieving the application report.");
+					}
+				});
+		}
+	</script>
+}

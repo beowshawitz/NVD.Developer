@@ -1,0 +1,56 @@
+﻿@using NVD.Developer.Core.Models
+@model ApplicationReport
+<div class="row">
+	<div class="col">
+		<div class="mb-3">
+			<label asp-for="@Model.UserName" class="form-label"></label>
+			<input type="text" asp-for="@Model.UserName" class="form-control" placeholder="Enter your full name" aria-label="Enter your full name." readonly />
+		</div>
+	</div>
+	<div class="col">
+		<div class="mb-3">
+			<label asp-for="@Model.UserContactEmail" class="form-label"></label>
+			<input type="email" asp-for="@Model.UserContactEmail" class="form-control" placeholder="Enter your email address" aria-label="Enter your email address." readonly />
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col">
+		<div class="mb-3">
+			<label asp-for="@Model.ApplicationName" class="form-label"></label>
+			<input type="text" asp-for="@Model.ApplicationName" class="form-control" placeholder="Enter the name of an application" aria-label="Enter the name of an application." readonly />
+		</div>
+	</div>
+	<div class="col">
+		<div class="mb-3">
+			<label asp-for="@Model.ApplicationVersion" class="form-label"></label>
+			<input type="text" asp-for="@Model.ApplicationVersion" class="form-control" placeholder="Enter a version number like '1.0'" aria-label="Enter a version number like '1.0'" readonly />
+		</div>
+	</div>
+</div>
+<div class="mb-3">
+	<label asp-for="@Model.Description" class="form-label"></label>
+	<textarea asp-for="@Model.Description" class="form-control" placeholder="Enter a reason you are reporting this application/version" aria-label="Enter a reason you are reporting this application/version." readonly></textarea>
+</div>
+<div class="row">
+	<div class="col">
+		<div class="mb-3">
+			<label asp-for="@Model.StatusId" class="form-label"></label>
+			<div class="input-group mb-3">
+				<input type="text" asp-for="@Model.Status.StatusName" class="form-control" aria-describedby="button-statusUpdate" readonly />
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="mb-3">
+			<label asp-for="@Model.DateCreated" class="form-label"></label>
+			<input type="datetime" asp-for="@Model.DateCreated" class="form-control" readonly />
+		</div>
+	</div>
+	<div class="col">
+		<div class="mb-3">
+			<label asp-for="@Model.DateUpdated" class="form-label"></label>
+			<input type="datetime" asp-for="@Model.DateUpdated" class="form-control" readonly />
+		</div>
+	</div>
+</div>
