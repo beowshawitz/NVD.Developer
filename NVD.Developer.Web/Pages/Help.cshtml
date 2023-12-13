@@ -1,0 +1,55 @@
+﻿@page
+@model NVD.Developer.Web.Pages.HelpModel
+@{
+	ViewData["Title"] = "Help";
+}
+<section class="py-5 text-center container" style="background: url('/images/help.jpg');  background-repeat: no-repeat; background-size: 100% 100%;">
+	<div class="row py-lg-5">
+		<div class="col-md-8 mx-auto text-light">
+			<h1 class="fw-light">Help</h1>
+			<p class="lead">You may find the following topics helpful, and the commands may become some of your favorites.</p>
+		</div>
+	</div>
+</section>
+<div class="py-5">
+	<div class="container">
+        <ol class="list-group list-group-numbered">
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Updating Existing Applications (Silently)</div>
+                    You can update all Windows Package Manager apps in one swift command, and it can be done silently (without any installation prompts) if you wish. Please see this command as an example to perform a silent batch update.
+                    <div class="card my-3">
+                        <div class="card-body">
+                            <code>winget upgrade --all --force --accept-package-agreements --accept-source-agreements --silent</code>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Winget Command Glossary</div>
+                    Winget commands can be executed with a variety of parameter switches. These commands help provide a customized experience. This list is not exhaustive, as the <a href="https://learn.microsoft.com/en-us/windows/package-manager/winget/install" target="_blank">Winget command site</a> should be referenced for more details. This list was provided as a quick reference.
+                    <dl>
+                        <dt>-v, --version</dt>
+                        <dd>This parameter will instruct the utility to install a specific version of the application. The utility will install the more recent version of an application, when this parameter is not included.</dd>
+                        <dt>-i, --interactive</dt>
+                        <dd>Interactive mode will display prompts and request input from the user before installation steps continue.</dd>
+                        <dt>-h, --silent</dt>
+                        <dd>Silent mode will not display prompts and typical user interface components used during an installation. It will show installation progress.</dd>
+                        <dt>-e, --exact</dt>
+                        <dd>When using a Winget Id or Name in the command, this parameter tells the utility to use the exact string, including case-sensitivity.</dd>
+                        <dt>--scope</dt>
+                        <dd>The scope of the installation is either performed as the <code>User</code> or the <code>machine</code>. Obviously a "user scope" means the application will be installed for the specific logged in user, where the "machine scope" installs the application for all users.</dd>
+                        <dt>-h, --silent</dt>
+                        <dd>Silent mode will not display prompts and typical user interface components used during an installation. It will show installation progress.</dd>
+                        <dt>--uninstall-previous</dt>
+                        <dd>When an application is installed, this command will remove any previous versions of the application before installing the new requested version.</dd>
+                        <dt>--accept-package-agreements & --accept-source-agreements</dt>
+                        <dd>These commands help suppress more user interactive elements of the installation procedure.</dd>
+                    </dl>
+                </div>
+            </li>
+            
+        </ol>
+	</div>
+</div>
