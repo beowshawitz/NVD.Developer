@@ -24,6 +24,15 @@ namespace NVD.Developer.Web.Pages.Admin.ApplicationRequests
 		[BindProperty]
 		public ApplicationRequest UserRequest { get; set; }
 
+		[BindProperty]
+		public ApplicationRequestComment NewComment { get; set; } = null!;
+
+		[BindProperty]
+		public int ItemId { get; set; }
+
+		[BindProperty]
+		public string UserGraphId { get; set; } = null!;
+
 		public List<ApplicationRequestStatus> RequestStatusItems { get; set; }
 
 		public async Task<IActionResult> OnGetAsync(int id = 0)
@@ -34,42 +43,21 @@ namespace NVD.Developer.Web.Pages.Admin.ApplicationRequests
 			}
 			else
 			{
+				ItemId = id;
 				var requestItem = await _applicationRequestService.GetRequest(id);
-				if (requestItem == null)
-				{
-					return NotFound();
-				}
-				else
+				if (requestItem != null)
 				{
 					UserRequest = requestItem;
 					await PopulateUserInformationAsync(UserRequest);
-				}
-				RequestStatusItems = await _applicationRequestService.GetStatusItems();
-			}
+					RequestStatusItems = await _applicationRequestService.GetStatusItems();
+					NewComment = new ApplicationRequestComment();
+					NewComment.RequestId = id;
 
-			return Page();
-		}
-
-		public async Task<IActionResult> OnPostAsync()
-		{
-			if (!ModelState.IsValid)
-			{
-				return Page();
-			}
-			if (UserRequest != null)
-			{
-				var newApp = await _applicationRequestService.SaveUpdateItem(UserRequest);
-				if (newApp != null && newApp.Id > 0)
-				{
-					HttpContext.Session.SetString("Notification", $"Your application request was received and will be processed.");
-					return RedirectToPage("/Admin/ApplicationRequests/Index");
+					UserGraphId = await _graphApiClient.GetGraphApiUserId();
+					return Page();
 				}
-				else
-				{
-					HttpContext.Session.SetString("Error", "The application request was not created correctly.");
-				}
-			}
-			return RedirectToPage();
+			}			
+			return NotFound();
 		}
 
 		public async Task<IActionResult> OnPostUpdateStatusAsync(int newStatusId, int appReqId = 0)
@@ -101,6 +89,36 @@ namespace NVD.Developer.Web.Pages.Admin.ApplicationRequests
 			}
 		}
 
+		public async Task<IActionResult> OnPostNewCommentAsync(int itemId)
+		{
+			if (itemId > 0)
+			{
+				ModelState.Clear();
+				NewComment.DateCreated = DateTime.Now;
+				NewComment.DateUpdated = DateTime.Now;
+				if (!TryValidateModel(NewComment, nameof(ApplicationRequestComment)))
+				{
+					HttpContext.Session.SetString("Error", "The comment did not pass validation and was not created.");
+					return RedirectToPage(new { id = itemId });
+				}
+				bool completed = await _applicationRequestService.AddComment(NewComment);
+				if (completed)
+				{
+					HttpContext.Session.SetString("Notification", $"The comment was saved for this request.");
+				}
+				else
+				{
+					HttpContext.Session.SetString("Error", $"The comment did not get saved correctly.");
+				}
+				return RedirectToPage(new { id = itemId });
+			}
+			else
+			{
+				HttpContext.Session.SetString("Error", "An item with the requested identifier does not exist.");
+			}
+			return RedirectToPage(new { id = itemId });
+		}
+
 		public async Task PopulateUserInformationAsync(ApplicationRequest request)
 		{
 			if (request != null)
@@ -117,6 +135,27 @@ namespace NVD.Developer.Web.Pages.Admin.ApplicationRequests
 				catch (Exception ex)
 				{
 					_logger.Log(LogLevel.Error, $"Error retrieving Graph user, {ex}");
+				}
+				foreach (var comment in request.Comments)
+				{
+					try
+					{
+						var user = await _graphApiClient.GetGraphApiUser(comment.UserId);
+						if (user != null)
+						{
+							comment.Author = user.DisplayName;
+							comment.AuthorEmail = user.Mail;
+						}
+						else
+						{
+							comment.Author = "Unknown";
+						}
+					}
+					catch (Exception ex)
+					{
+						_logger.Log(LogLevel.Error, $"Error retrieving Graph user by id {comment.UserId}, {ex}");
+						comment.Author = "Unknown";
+					}
 				}
 			}
 		}

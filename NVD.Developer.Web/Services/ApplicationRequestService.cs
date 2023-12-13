@@ -143,5 +143,26 @@ namespace NVD.Developer.Web.Services
 				throw appEx;
 			}
 		}
-	}
+
+        public async Task<bool> AddComment(ApplicationRequestComment item)
+        {
+            try
+            {
+                var json = JsonConvert.SerializeObject(item);
+                using var content = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+                HttpResponseMessage response = await _httpClient.PutAsync($"{_route}/AddComment", content);
+                response.EnsureSuccessStatusCode();
+                using (HttpContent respContent = response.Content)
+                {
+                    var jsonResp = await respContent.ReadAsStringAsync();
+                    return string.IsNullOrEmpty(jsonResp) ? false : JsonConvert.DeserializeObject<bool>(jsonResp);
+                }
+            }
+            catch (Exception ex)
+            {
+                ApplicationException appEx = new ApplicationException("An error occurred while adding the comment to the application request.", ex);
+                throw appEx;
+            }
+        }
+    }
 }

@@ -72,6 +72,8 @@
     <Build Include="nvddev\Tables\ApplicationRequestStatus.sql" />
     <Build Include="nvddev\Tables\ApplicationReports.sql" />
     <Build Include="nvddev\Tables\ApplicationReportStatus.sql" />
+    <Build Include="nvddev\Tables\ApplicationReportComments.sql" />
+    <Build Include="nvddev\Tables\ApplicationRequestComments.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="nvddev\Schemas\NVDDeveloperSchema.sql" />

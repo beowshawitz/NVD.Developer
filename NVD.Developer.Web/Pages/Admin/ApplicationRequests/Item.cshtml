@@ -33,78 +33,124 @@
 				The following application was requested by a user. The user could not find this application, and he/she may need it for their daily job function. Please review this application information and proceed to change the status as you process it.
 			</p>
 			<div class="card mt-5">
-				<form method="post">
-					<div class="card-header">
-						<h1 class="modal-title fs-5" id="requestAppModalLabel">Application Request Item</h1>
+				<div class="card-header">
+					<h1 class="modal-title fs-5" id="requestAppModalLabel">Application Request Item</h1>
+				</div>
+				<div class="card-body">
+					<input type="hidden" name="userId" value="@Model.UserRequest.UserId" />
+					<input type="hidden" asp-for="UserRequest.Id" />
+					<input type="hidden" asp-for="UserRequest.DateUpdated" />
+					<div class="row">
+						<div class="col">
+							<div class="mb-3">
+								<label asp-for="UserRequest.UserName" class="form-label"></label>
+								<input type="text" asp-for="UserRequest.UserName" class="form-control" placeholder="Enter your full name" aria-label="Enter your full name." readonly />
+							</div>
+						</div>
+						<div class="col">
+							<div class="mb-3">
+								<label asp-for="UserRequest.UserContactEmail" class="form-label"></label>
+								<input type="email" asp-for="UserRequest.UserContactEmail" class="form-control" placeholder="Enter your email address" aria-label="Enter your email address." readonly />
+							</div>
+						</div>
 					</div>
-					<div class="card-body">
-						<input type="hidden" name="userId" value="@Model.UserRequest.UserId" />
-						<input type="hidden" asp-for="UserRequest.Id" />
-						<input type="hidden" asp-for="UserRequest.DateUpdated" />
-						<div class="row">
-							<div class="col">
-								<div class="mb-3">
-									<label asp-for="UserRequest.UserName" class="form-label"></label>
-									<input type="text" asp-for="UserRequest.UserName" class="form-control" placeholder="Enter your full name" aria-label="Enter your full name." readonly />
-								</div>
-							</div>
-							<div class="col">
-								<div class="mb-3">
-									<label asp-for="UserRequest.UserContactEmail" class="form-label"></label>
-									<input type="email" asp-for="UserRequest.UserContactEmail" class="form-control" placeholder="Enter your email address" aria-label="Enter your email address." readonly />
-								</div>
+					<div class="row">
+						<div class="col">
+							<div class="mb-3">
+								<label asp-for="UserRequest.ApplicationName" class="form-label"></label>
+								<input type="text" asp-for="UserRequest.ApplicationName" class="form-control" placeholder="Enter the name of an application" aria-label="Enter the name of an application." readonly />
 							</div>
 						</div>
-						<div class="row">
-							<div class="col">
-								<div class="mb-3">
-									<label asp-for="UserRequest.ApplicationName" class="form-label"></label>
-									<input type="text" asp-for="UserRequest.ApplicationName" class="form-control" placeholder="Enter the name of an application" aria-label="Enter the name of an application." readonly />
-								</div>
-							</div>
-							<div class="col">
-								<div class="mb-3">
-									<label asp-for="UserRequest.ApplicationVersion" class="form-label"></label>
-									<input type="text" asp-for="UserRequest.ApplicationVersion" class="form-control" placeholder="Enter a version number like '1.0'" aria-label="Enter a version number like '1.0'" readonly />
-								</div>
+						<div class="col">
+							<div class="mb-3">
+								<label asp-for="UserRequest.ApplicationVersion" class="form-label"></label>
+								<input type="text" asp-for="UserRequest.ApplicationVersion" class="form-control" placeholder="Enter a version number like '1.0'" aria-label="Enter a version number like '1.0'" readonly />
 							</div>
 						</div>
-						<div class="mb-3">
-							<label asp-for="UserRequest.RequestingReason" class="form-label"></label>
-							<textarea asp-for="UserRequest.RequestingReason" class="form-control" placeholder="Enter a reason you are requesting this application/version" aria-label="Enter a reason you are requesting this application/version." readonly></textarea>
-						</div>
-						<div class="row">
-							<div class="col">
-								<div class="mb-3">
-									<label asp-for="UserRequest.StatusId" class="form-label"></label>
-									<div class="input-group mb-3">
-										<input type="text" asp-for="UserRequest.Status.StatusName" class="form-control" aria-describedby="button-statusUpdate" readonly />
-										<button class="btn btn-outline-secondary" type="button" id="button-statusUpdate" data-bs-toggle="modal" data-bs-target="#updateStatusModal">
-											<svg class="bi " role="img" aria-label="Info:" width="16" height="16"><use xlink:href="#bi-clipboard-check" /></svg>
-										</button>
-									</div>
+					</div>
+					<div class="mb-3">
+						<label asp-for="UserRequest.RequestingReason" class="form-label"></label>
+						<textarea asp-for="UserRequest.RequestingReason" class="form-control" placeholder="Enter a reason you are requesting this application/version" aria-label="Enter a reason you are requesting this application/version." readonly></textarea>
+					</div>
+					<div class="row">
+						<div class="col">
+							<div class="mb-3">
+								<label asp-for="UserRequest.StatusId" class="form-label"></label>
+								<div class="input-group mb-3">
+									<input type="text" asp-for="UserRequest.Status.StatusName" class="form-control" aria-describedby="button-statusUpdate" readonly />
+									<button class="btn btn-outline-secondary" type="button" id="button-statusUpdate" data-bs-toggle="modal" data-bs-target="#updateStatusModal">
+										<svg class="bi " role="img" aria-label="Info:" width="16" height="16"><use xlink:href="#bi-clipboard-check" /></svg>
+									</button>
+								</div>
 									
-								</div>
 							</div>
-							<div class="col">
-								<div class="mb-3">
-									<label asp-for="UserRequest.DateCreated" class="form-label"></label>
-									<input type="datetime" asp-for="UserRequest.DateCreated" class="form-control"  readonly />
-								</div>
+						</div>
+						<div class="col">
+							<div class="mb-3">
+								<label asp-for="UserRequest.DateCreated" class="form-label"></label>
+								<input type="datetime" asp-for="UserRequest.DateCreated" class="form-control"  readonly />
 							</div>
-							<div class="col">
-								<div class="mb-3">
-									<label asp-for="UserRequest.DateUpdated" class="form-label"></label>
-									<input type="datetime" asp-for="UserRequest.DateUpdated" class="form-control" readonly />
-								</div>
+						</div>
+						<div class="col">
+							<div class="mb-3">
+								<label asp-for="UserRequest.DateUpdated" class="form-label"></label>
+								<input type="datetime" asp-for="UserRequest.DateUpdated" class="form-control" readonly />
 							</div>
 						</div>
 					</div>
-					<div class="card-footer">
-						<button type="submit" class="btn btn-primary">Submit</button>
-						<a href="/Admin/ApplicationRequests/Index" class="btn btn-secondary" title="Click to cancel">Cancel</a>
+				</div>
+			</div>
+			<div class="card mt-3">
+				<form method="post" asp-page-handler="NewComment">
+					<div class="card-body">
+						<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+						<h5 class="card-title">Leave a comment for this request</h5>
+						<div class="row mb-3">
+							<label asp-for="NewComment.Comment" class="col-3 col-form-label"></label>
+							<div class="col-9">
+								<textarea asp-for="NewComment.Comment" class="form-control"></textarea>
+								<span asp-validation-for="NewComment.Comment" class="text-danger"></span>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-3"></div>
+							<div class="col-9">
+								<button type="submit" class="btn btn-primary btn-sm commentSubmit">Submit</button>
+							</div>
+						</div>
 					</div>
+					<input type="hidden" asp-for="NewComment.RequestId" value="@Model.ItemId" />
+					<input type="hidden" asp-for="NewComment.UserId" value="@Model.UserGraphId" />
+					<input type="hidden" asp-for="ItemId" value="@Model.ItemId" />
 				</form>
+			</div>
+
+			<div class="card my-3">
+				<div class="card-body">
+					<h5 class="card-title">Comments for this request</h5>
+					@if (Model.UserRequest.Comments != null && Model.UserRequest.Comments.Count > 0)
+					{
+						@foreach (var item in Model.UserRequest.Comments)
+						{
+							<div class="d-flex my-4">
+								<div class="flex-shrink-0">
+									<svg class="bi flex-shrink-0 me-2" width="32" height="32" role="img"><use xlink:href="#file-person" /></svg>
+								</div>
+								<div class="flex-grow-1 ms-3">
+									<div class="mb-2">
+										<a href="javascript:void(0);" class="h6 btn-link" title="">@item.Author</a>
+										<small class="ms-2 text-muted">Created @item.GetPrettyDateCreated()</small>
+									</div>
+									<p>@item.Comment</p>
+								</div>
+							</div>
+						}
+					}
+					else
+					{
+						<div class="alert alert-info">No comments have been added yet.</div>
+					}
+				</div>
 			</div>
 		</div>
 	</div>
@@ -149,7 +195,7 @@
 </div>
 <partial name="_toastPartial" />
 @section Scripts {
-	<script type="text/javascript" src="~/js/holder.js"></script>
+	<partial name="_ValidationScriptsPartial" />
 	<script type="text/javascript">
 		$(document).ready(function () {
 			$(".toast").toast('show');

@@ -33,78 +33,124 @@
 				The following application was reported by a user. The user found an issue with this application or couldn't get it to function correctly. Please see the description, given by the user, and provide an updated status as applicable.
 			</p>
 			<div class="card mt-5">
-				<form method="post">
-					<div class="card-header">
-						<h1 class="modal-title fs-5" id="reportAppModalLabel">Application Report Item</h1>
+				<div class="card-header">
+					<h1 class="modal-title fs-5" id="reportAppModalLabel">Application Report Item</h1>
+				</div>
+				<div class="card-body">
+					<input type="hidden" name="userId" value="@Model.UserReport.UserId" />
+					<input type="hidden" asp-for="UserReport.Id" />
+					<input type="hidden" asp-for="UserReport.DateUpdated" />
+					<div class="row">
+						<div class="col">
+							<div class="mb-3">
+								<label asp-for="UserReport.UserName" class="form-label"></label>
+								<input type="text" asp-for="UserReport.UserName" class="form-control" placeholder="Enter your full name" aria-label="Enter your full name." readonly />
+							</div>
+						</div>
+						<div class="col">
+							<div class="mb-3">
+								<label asp-for="UserReport.UserContactEmail" class="form-label"></label>
+								<input type="email" asp-for="UserReport.UserContactEmail" class="form-control" placeholder="Enter your email address" aria-label="Enter your email address." readonly />
+							</div>
+						</div>
 					</div>
+					<div class="row">
+						<div class="col">
+							<div class="mb-3">
+								<label asp-for="UserReport.ApplicationName" class="form-label"></label>
+								<input type="text" asp-for="UserReport.ApplicationName" class="form-control" placeholder="Enter the name of an application" aria-label="Enter the name of an application." readonly />
+							</div>
+						</div>
+						<div class="col">
+							<div class="mb-3">
+								<label asp-for="UserReport.ApplicationVersion" class="form-label"></label>
+								<input type="text" asp-for="UserReport.ApplicationVersion" class="form-control" placeholder="Enter a version number like '1.0'" aria-label="Enter a version number like '1.0'" readonly />
+							</div>
+						</div>
+					</div>
+					<div class="mb-3">
+						<label asp-for="UserReport.Description" class="form-label"></label>
+						<textarea asp-for="UserReport.Description" class="form-control" placeholder="Enter a reason you are reporting this application/version" aria-label="Enter a reason you are reporting this application/version." readonly></textarea>
+					</div>
+					<div class="row">
+						<div class="col">
+							<div class="mb-3">
+								<label asp-for="UserReport.StatusId" class="form-label"></label>
+								<div class="input-group mb-3">
+									<input type="text" asp-for="UserReport.Status.StatusName" class="form-control" aria-describedby="button-statusUpdate" readonly />
+									<button class="btn btn-outline-secondary" type="button" id="button-statusUpdate" data-bs-toggle="modal" data-bs-target="#updateStatusModal">
+										<svg class="bi " role="img" aria-label="Info:" width="16" height="16"><use xlink:href="#bi-clipboard-check" /></svg>
+									</button>
+								</div>
+							</div>
+						</div>
+						<div class="col">
+							<div class="mb-3">
+								<label asp-for="UserReport.DateCreated" class="form-label"></label>
+								<input type="datetime" asp-for="UserReport.DateCreated" class="form-control"  readonly />
+							</div>
+						</div>
+						<div class="col">
+							<div class="mb-3">
+								<label asp-for="UserReport.DateUpdated" class="form-label"></label>
+								<input type="datetime" asp-for="UserReport.DateUpdated" class="form-control" readonly />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="card mt-3">
+				<form method="post" asp-page-handler="NewComment">
 					<div class="card-body">
-						<input type="hidden" name="userId" value="@Model.UserReport.UserId" />
-						<input type="hidden" asp-for="UserReport.Id" />
-						<input type="hidden" asp-for="UserReport.DateUpdated" />
-						<div class="row">
-							<div class="col">
-								<div class="mb-3">
-									<label asp-for="UserReport.UserName" class="form-label"></label>
-									<input type="text" asp-for="UserReport.UserName" class="form-control" placeholder="Enter your full name" aria-label="Enter your full name." readonly />
-								</div>
-							</div>
-							<div class="col">
-								<div class="mb-3">
-									<label asp-for="UserReport.UserContactEmail" class="form-label"></label>
-									<input type="email" asp-for="UserReport.UserContactEmail" class="form-control" placeholder="Enter your email address" aria-label="Enter your email address." readonly />
-								</div>
+						<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+						<h5 class="card-title">Leave a comment for this report</h5>
+						<div class="row mb-3">
+							<label asp-for="NewComment.Comment" class="col-3 col-form-label"></label>
+							<div class="col-9">
+								<textarea asp-for="NewComment.Comment" class="form-control"></textarea>
+								<span asp-validation-for="NewComment.Comment" class="text-danger"></span>
 							</div>
 						</div>
 						<div class="row">
-							<div class="col">
-								<div class="mb-3">
-									<label asp-for="UserReport.ApplicationName" class="form-label"></label>
-									<input type="text" asp-for="UserReport.ApplicationName" class="form-control" placeholder="Enter the name of an application" aria-label="Enter the name of an application." readonly />
-								</div>
-							</div>
-							<div class="col">
-								<div class="mb-3">
-									<label asp-for="UserReport.ApplicationVersion" class="form-label"></label>
-									<input type="text" asp-for="UserReport.ApplicationVersion" class="form-control" placeholder="Enter a version number like '1.0'" aria-label="Enter a version number like '1.0'" readonly />
-								</div>
-							</div>
-						</div>
-						<div class="mb-3">
-							<label asp-for="UserReport.Description" class="form-label"></label>
-							<textarea asp-for="UserReport.Description" class="form-control" placeholder="Enter a reason you are reporting this application/version" aria-label="Enter a reason you are reporting this application/version." readonly></textarea>
-						</div>
-						<div class="row">
-							<div class="col">
-								<div class="mb-3">
-									<label asp-for="UserReport.StatusId" class="form-label"></label>
-									<div class="input-group mb-3">
-										<input type="text" asp-for="UserReport.Status.StatusName" class="form-control" aria-describedby="button-statusUpdate" readonly />
-										<button class="btn btn-outline-secondary" type="button" id="button-statusUpdate" data-bs-toggle="modal" data-bs-target="#updateStatusModal">
-											<svg class="bi " role="img" aria-label="Info:" width="16" height="16"><use xlink:href="#bi-clipboard-check" /></svg>
-										</button>
-									</div>
-									
-								</div>
-							</div>
-							<div class="col">
-								<div class="mb-3">
-									<label asp-for="UserReport.DateCreated" class="form-label"></label>
-									<input type="datetime" asp-for="UserReport.DateCreated" class="form-control"  readonly />
-								</div>
-							</div>
-							<div class="col">
-								<div class="mb-3">
-									<label asp-for="UserReport.DateUpdated" class="form-label"></label>
-									<input type="datetime" asp-for="UserReport.DateUpdated" class="form-control" readonly />
-								</div>
+							<div class="col-3"></div>
+							<div class="col-9">
+								<button type="submit" class="btn btn-primary btn-sm commentSubmit">Submit</button>
 							</div>
 						</div>
 					</div>
-					<div class="card-footer">
-						<button type="submit" class="btn btn-primary">Submit</button>
-						<a href="/Admin/ApplicationReports/Index" class="btn btn-secondary" title="Click to cancel">Cancel</a>
-					</div>
+					<input type="hidden" asp-for="NewComment.ReportId" value="@Model.ItemId" />
+					<input type="hidden" asp-for="NewComment.UserId" value="@Model.UserGraphId" />
+					<input type="hidden" asp-for="ItemId" value="@Model.ItemId" />
 				</form>
+			</div>
+
+			<div class="card my-3">
+				<div class="card-body">
+					<h5 class="card-title">Comments for this report</h5>
+					@if (Model.UserReport.Comments != null && Model.UserReport.Comments.Count > 0)
+					{
+						@foreach (var item in Model.UserReport.Comments)
+						{
+							<div class="d-flex my-4">
+								<div class="flex-shrink-0">
+									<svg class="bi flex-shrink-0 me-2" width="32" height="32" role="img"><use xlink:href="#file-person" /></svg>
+								</div>
+								<div class="flex-grow-1 ms-3">
+									<div class="mb-2">
+										<a href="javascript:void(0);" class="h6 btn-link" title="">@item.Author</a>
+										<small class="ms-2 text-muted">Created @item.GetPrettyDateCreated()</small>
+									</div>
+									<p>@item.Comment</p>
+								</div>
+							</div>
+						}
+					}
+					else
+					{
+						<div class="alert alert-info">No comments have been added yet.</div>
+					}
+				</div>
 			</div>
 		</div>
 	</div>
@@ -118,7 +164,7 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<input type="hidden" name="appReqId" value="@Model.UserReport.Id" />
+					<input type="hidden" name="appRepId" value="@Model.UserReport.Id" />
 					<div class="mb-3">
 						<label for="newStatusId" class="form-label">Select a new status</label>
 						<select name="newStatusId" class="form-select">
@@ -149,7 +195,7 @@
 </div>
 <partial name="_toastPartial" />
 @section Scripts {
-	<script type="text/javascript" src="~/js/holder.js"></script>
+	<partial name="_ValidationScriptsPartial" />
 	<script type="text/javascript">
 		$(document).ready(function () {
 			$(".toast").toast('show');

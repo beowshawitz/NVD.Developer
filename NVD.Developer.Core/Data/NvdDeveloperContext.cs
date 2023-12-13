@@ -19,8 +19,11 @@ namespace NVD.Developer.Core.Data
 		public DbSet<ApplicationRequest> ApplicationRequests { get; set; } = null!;
 		public DbSet<ApplicationReportStatus> ApplicationReportStatus { get; set; } = null!;
 		public DbSet<ApplicationReport> ApplicationReports { get; set; } = null!;
+        public DbSet<ApplicationRequestComment> ApplicationRequestComments { get; set; } = null!;
+        public DbSet<ApplicationReportComment> ApplicationReportComments { get; set; } = null!;
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 			base.OnModelCreating(modelBuilder);
 			modelBuilder.HasDefaultSchema("nvddev");

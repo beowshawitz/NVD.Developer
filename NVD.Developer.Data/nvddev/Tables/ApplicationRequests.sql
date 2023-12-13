@@ -7,7 +7,7 @@
     [ApplicationVersion] VARCHAR(150) NULL, 
     [RequestingReason] VARCHAR(MAX) NOT NULL, 
     [DateCreated] DATETIME NOT NULL, 
-    [DateUpdated] DATETIME NOT NULL,     
+    [DateUpdated] DATETIME NOT NULL,  
     CONSTRAINT [PK_ApplicationRequests] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_ApplicationRequests_ApplicationRequestStatus] FOREIGN KEY ([StatusId]) REFERENCES [nvddev].[ApplicationRequestStatus]([Id]),
 )

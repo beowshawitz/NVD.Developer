@@ -54,3 +54,24 @@
 		</div>
 	</div>
 </div>
+@if (Model.Comments != null && Model.Comments.Count() > 0)
+{
+	var item = Model.Comments[0];
+	<div class="row border-top">
+		<div class="col">
+			<h5 class="mt-2">Latest Comment</h5>
+			<div class="d-flex my-4">
+				<div class="flex-shrink-0">
+					<svg class="bi flex-shrink-0 me-2" width="32" height="32" role="img"><use xlink:href="#file-person" /></svg>
+				</div>
+				<div class="flex-grow-1 ms-3">
+					<div class="mb-2">
+						<a href="javascript:void(0);" class="h6 btn-link" title="">@item.Author</a>
+						<small class="ms-2 text-muted">Created @item.GetPrettyDateCreated()</small>
+					</div>
+					<p>@item.Comment</p>
+				</div>
+			</div>
+		</div>
+	</div>
+}

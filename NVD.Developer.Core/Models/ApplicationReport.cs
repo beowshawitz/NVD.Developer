@@ -42,8 +42,12 @@ namespace NVD.Developer.Core.Models
 		[Display(Name = "Date Updated")]
 		public DateTime DateUpdated { get; set; }
 
-		public ApplicationReport()
+		[NotMapped]
+		public List<ApplicationReportComment> Comments { get; set; }
+
+        public ApplicationReport()
 		{
+			Comments = new List<ApplicationReportComment>();
 		}	
 
 		public string GetPrettyDateCreated()

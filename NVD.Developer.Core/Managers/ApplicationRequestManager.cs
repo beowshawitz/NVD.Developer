@@ -132,8 +132,12 @@ namespace NVD.Developer.Core.Managers
 			if (_context != null && _context.ApplicationRequests.Any(x => x.Id.Equals(requestId)))
 			{
 				var request = await _context.ApplicationRequests
-					.Include(x => x.Status)
-					.FirstOrDefaultAsync(x => x.Id.Equals(requestId));
+					.Include(ar => ar.Status)
+                    .FirstOrDefaultAsync(ar => ar.Id.Equals(requestId));
+				if(request != null)
+				{
+					request.Comments = await _context.ApplicationRequestComments.Where(x=>x.RequestId.Equals(requestId)).OrderByDescending(x => x.DateCreated).ToListAsync();
+				}
 				return request;
 			}
 			else
@@ -185,5 +189,19 @@ namespace NVD.Developer.Core.Managers
 			}
 			return completed;
 		}
-	}
+
+        public async Task<bool> AddComment(ApplicationRequestComment item)
+        {
+            if (_context != null)
+            {
+                _context.ApplicationRequestComments.Add(item);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }

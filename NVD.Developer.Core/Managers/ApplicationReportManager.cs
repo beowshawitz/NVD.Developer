@@ -134,6 +134,10 @@ namespace NVD.Developer.Core.Managers
 				var report = await _context.ApplicationReports
 					.Include(x => x.Status)
 					.FirstOrDefaultAsync(x => x.Id.Equals(reportId));
+				if (report != null)
+				{
+					report.Comments = await _context.ApplicationReportComments.Where(x => x.ReportId.Equals(reportId)).OrderByDescending(x=>x.DateCreated).ToListAsync();
+				}
 				return report;
 			}
 			else
@@ -185,5 +189,19 @@ namespace NVD.Developer.Core.Managers
 			}
 			return completed;
 		}
-	}
+
+        public async Task<bool> AddComment(ApplicationReportComment item)
+        {
+            if (_context != null)
+            {
+                _context.ApplicationReportComments.Add(item);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }

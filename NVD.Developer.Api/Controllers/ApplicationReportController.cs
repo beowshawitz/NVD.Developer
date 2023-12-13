@@ -59,14 +59,14 @@ namespace NVD.Developer.Api.Controllers
 
 
 		[HttpPut]
-		public async Task<ApplicationReport> PutAsync([FromBody] ApplicationReport report)
+		public async Task<ApplicationReport?> PutAsync([FromBody] ApplicationReport report)
 		{
 			ApplicationReportManager appMan = new ApplicationReportManager(_configuration, _context);
 			return await appMan.UpdateReport(report);
 		}
 
 		[HttpPost]
-		public async Task<ApplicationReport> PostAsync([FromBody] ApplicationReport report)
+		public async Task<ApplicationReport?> PostAsync([FromBody] ApplicationReport report)
 		{
 			ApplicationReportManager appMan = new ApplicationReportManager(_configuration, _context);
 			return await appMan.CreateReport(report);
@@ -78,5 +78,13 @@ namespace NVD.Developer.Api.Controllers
 			ApplicationReportManager appMan = new ApplicationReportManager(_configuration, _context);
 			return await appMan.DeleteReport(reportId);
 		}
-	}
+
+        [HttpPut]
+        [Route("AddComment")]
+        public async Task<bool> AddCommentAsync([FromBody] ApplicationReportComment item)
+        {
+            ApplicationReportManager appMan = new ApplicationReportManager(_configuration, _context);
+            return await appMan.AddComment(item);
+        }
+    }
 }

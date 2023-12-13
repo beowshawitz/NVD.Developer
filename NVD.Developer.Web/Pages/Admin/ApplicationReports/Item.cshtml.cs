@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Graph.Models;
 using NVD.Developer.Core.Models;
 using NVD.Developer.Web.Graph;
@@ -24,6 +25,15 @@ namespace NVD.Developer.Web.Pages.Admin.ApplicationReports
 		[BindProperty]
 		public ApplicationReport UserReport { get; set; }
 
+		[BindProperty]
+		public ApplicationReportComment NewComment { get; set; } = null!;
+
+		[BindProperty]
+		public int ItemId { get; set; }
+
+		[BindProperty]
+		public string UserGraphId { get; set; } = null!;
+
 		public List<ApplicationReportStatus> ReportStatusItems { get; set; }
 
 		public async Task<IActionResult> OnGetAsync(int id = 0)
@@ -34,60 +44,40 @@ namespace NVD.Developer.Web.Pages.Admin.ApplicationReports
 			}
 			else
 			{
+				ItemId = id;
 				var reportItem = await _applicationReportService.GetReport(id);
-				if (reportItem == null)
-				{
-					return NotFound();
-				}
-				else
+				if (reportItem != null)
 				{
 					UserReport = reportItem;
 					await PopulateUserInformationAsync(UserReport);
-				}
-				ReportStatusItems = await _applicationReportService.GetStatusItems();
-			}
+					ReportStatusItems = await _applicationReportService.GetStatusItems();
+					NewComment = new ApplicationReportComment();
+					NewComment.ReportId = id;
 
-			return Page();
-		}
+					UserGraphId = await _graphApiClient.GetGraphApiUserId();
 
-		public async Task<IActionResult> OnPostAsync()
-		{
-			if (!ModelState.IsValid)
-			{
-				return Page();
+					return Page();
+				}				
 			}
-			if (UserReport != null)
-			{
-				var newApp = await _applicationReportService.SaveUpdateItem(UserReport);
-				if (newApp != null && newApp.Id > 0)
-				{
-					HttpContext.Session.SetString("Notification", $"Your application report was received and will be processed.");
-					return RedirectToPage("/Admin/ApplicationReports/Index");
-				}
-				else
-				{
-					HttpContext.Session.SetString("Error", "The application report was not created correctly.");
-				}
-			}
-			return RedirectToPage();
+			return NotFound();
 		}
 
 		public async Task<IActionResult> OnPostUpdateStatusAsync(int newStatusId, int appRepId = 0)
 		{
 			if (appRepId > -1)
 			{
-				var appReport = await _applicationReportService.GetReport(appRepId);
+				var reportItem = await _applicationReportService.GetReport(appRepId);
 
-				if (appReport == null)
+				if (reportItem == null)
 				{
-					HttpContext.Session.SetString("Error", "An application report with the reported identifier does not exist.");
+					HttpContext.Session.SetString("Error", "An application report with the requested identifier does not exist.");
 				}
-				else 
+				else
 				{
-					appReport.StatusId = newStatusId;
-					appReport.Status = null;
-					appReport.DateUpdated = DateTime.Now;
-					var appUpdated = await _applicationReportService.SaveUpdateItem(appReport);
+					reportItem.StatusId = newStatusId;
+					reportItem.Status = null;
+					reportItem.DateUpdated = DateTime.Now;
+					var appUpdated = await _applicationReportService.SaveUpdateItem(reportItem);
 					if (appUpdated != null && appUpdated.Id > 0)
 					{
 						HttpContext.Session.SetString("Notification", $"The application status was updated.");
@@ -97,8 +87,38 @@ namespace NVD.Developer.Web.Pages.Admin.ApplicationReports
 			}
 			else
 			{
-				return RedirectToPage("/Admin/ApplicationReports/Index");
+				return RedirectToPage("/Admin/ApplicationRequests/Index");
 			}
+		}
+
+		public async Task<IActionResult> OnPostNewCommentAsync(int itemId)
+		{
+			if (itemId > 0)
+			{
+				ModelState.Clear();
+				NewComment.DateCreated = DateTime.Now;
+				NewComment.DateUpdated = DateTime.Now;
+				if (!TryValidateModel(NewComment, nameof(ApplicationReportComment)))
+				{
+					HttpContext.Session.SetString("Error", "The comment did not pass validation and was not created.");
+					return RedirectToPage(new { id = itemId });
+				}
+				bool completed = await _applicationReportService.AddComment(NewComment);
+				if (completed)
+				{
+					HttpContext.Session.SetString("Notification", $"The comment was saved for this report.");
+				}
+				else
+				{
+					HttpContext.Session.SetString("Error", $"The comment did not get saved correctly.");
+				}
+				return RedirectToPage(new { id = itemId });
+			}
+			else
+			{
+				HttpContext.Session.SetString("Error", "An item with the requested identifier does not exist.");
+			}
+			return RedirectToPage(new { id = itemId });
 		}
 
 		public async Task PopulateUserInformationAsync(ApplicationReport report)
@@ -117,6 +137,27 @@ namespace NVD.Developer.Web.Pages.Admin.ApplicationReports
 				catch (Exception ex)
 				{
 					_logger.Log(LogLevel.Error, $"Error retrieving Graph user, {ex}");
+				}
+				foreach(var comment in report.Comments)
+				{
+					try
+					{
+						var user = await _graphApiClient.GetGraphApiUser(comment.UserId);
+						if(user != null)
+						{
+							comment.Author = user.DisplayName;
+							comment.AuthorEmail = user.Mail;
+						}
+						else
+						{
+							comment.Author = "Unknown";
+						}
+					}
+					catch (Exception ex)
+					{
+						_logger.Log(LogLevel.Error, $"Error retrieving Graph user by id {comment.UserId}, {ex}");
+						comment.Author = "Unknown";
+					}
 				}
 			}
 		}

@@ -78,5 +78,13 @@ namespace NVD.Developer.Api.Controllers
 			ApplicationRequestManager appMan = new ApplicationRequestManager(_configuration, _context);
 			return await appMan.DeleteRequest(requestId);
 		}
-	}
+
+        [HttpPut]
+        [Route("AddComment")]
+        public async Task<bool> AddCommentAsync([FromBody] ApplicationRequestComment item)
+        {
+            ApplicationRequestManager appMan = new ApplicationRequestManager(_configuration, _context);
+            return await appMan.AddComment(item);
+        }
+    }
 }

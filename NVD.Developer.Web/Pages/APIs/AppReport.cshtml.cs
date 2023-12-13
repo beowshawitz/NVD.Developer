@@ -50,6 +50,30 @@ namespace NVD.Developer.Web.Pages.APIs
 				{
 					_logger.Log(LogLevel.Error, $"Error retrieving Graph user, {ex}");
 				}
+				if(report.Comments != null && report.Comments.Count() > 0)
+				{
+					for(int i = 0; i < 1; i++)
+					{
+						try
+						{
+							var user = await _graphApiClient.GetGraphApiUser(report.Comments[i].UserId);
+							if (user != null)
+							{
+								report.Comments[i].Author = user.DisplayName;
+								report.Comments[i].AuthorEmail = user.Mail;
+							}
+							else
+							{
+								report.Comments[i].Author = "Unknown";
+							}
+						}
+						catch (Exception ex)
+						{
+							_logger.Log(LogLevel.Error, $"Error retrieving Graph user by id {report.Comments[i].UserId}, {ex}");
+							report.Comments[i].Author = "Unknown";
+						}
+					}
+				}
 			}
 		}
 	}
