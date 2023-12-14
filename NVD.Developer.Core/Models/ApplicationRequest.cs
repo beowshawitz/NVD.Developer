@@ -43,7 +43,7 @@ namespace NVD.Developer.Core.Models
 		public DateTime DateUpdated { get; set; }
 
 		[NotMapped]
-		public List<ApplicationRequestComment> Comments { get; set; }
+		public virtual List<ApplicationRequestComment> Comments { get; set; }
 
         public ApplicationRequest()
 		{

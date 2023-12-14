@@ -134,9 +134,10 @@ namespace NVD.Developer.Core.Managers
 				var request = await _context.ApplicationRequests
 					.Include(ar => ar.Status)
                     .FirstOrDefaultAsync(ar => ar.Id.Equals(requestId));
-				if(request != null)
+				
+				if (request != null)
 				{
-					request.Comments = await _context.ApplicationRequestComments.Where(x=>x.RequestId.Equals(requestId)).OrderByDescending(x => x.DateCreated).ToListAsync();
+					request.Comments = await _context.ApplicationRequestComments.Where(x => x.RequestId.Equals(requestId)).OrderByDescending(x => x.DateCreated).ToListAsync();
 				}
 				return request;
 			}

@@ -134,6 +134,7 @@ namespace NVD.Developer.Core.Managers
 				var report = await _context.ApplicationReports
 					.Include(x => x.Status)
 					.FirstOrDefaultAsync(x => x.Id.Equals(reportId));
+
 				if (report != null)
 				{
 					report.Comments = await _context.ApplicationReportComments.Where(x => x.ReportId.Equals(reportId)).OrderByDescending(x=>x.DateCreated).ToListAsync();

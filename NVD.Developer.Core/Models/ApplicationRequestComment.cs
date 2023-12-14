@@ -15,9 +15,6 @@ namespace NVD.Developer.Core.Models
 		public int RequestId { get; set; } = 0;
 
 		[NotMapped]
-		public ApplicationRequest? Request { get; set; }
-
-		[NotMapped]
 		[Display(Name = "Author")]		
 		public string Author { get; set; } = string.Empty;
 

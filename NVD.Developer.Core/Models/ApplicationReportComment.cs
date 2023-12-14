@@ -14,9 +14,6 @@ namespace NVD.Developer.Core.Models
 		[Required]
 		public int ReportId { get; set; } = 0;
 
-		[NotMapped] 
-		public ApplicationReport? Report { get; set; }
-
 		[NotMapped]
 		[Display(Name = "Author")]		
 		public string Author { get; set; } = string.Empty;

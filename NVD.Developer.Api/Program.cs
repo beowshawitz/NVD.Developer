@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NVD.Developer.Core.Data;
+using System.Text.Json.Serialization;
 
 namespace NVD.Developer.Api
 {
@@ -11,7 +12,10 @@ namespace NVD.Developer.Api
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            //builder.Services.AddControllers();
+
+            builder.Services.AddControllers().AddJsonOptions(options =>
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

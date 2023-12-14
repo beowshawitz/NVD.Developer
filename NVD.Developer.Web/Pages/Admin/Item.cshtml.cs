@@ -98,6 +98,7 @@ namespace NVD.Developer.Web.Pages.Admin
 					ApplicationItem.DateUpdated = DateTime.UtcNow;
 
 					var newApp = await _applicationService.SaveUpdateItem(ApplicationItem);
+					HttpContext.Session.SetString("Notification", "The item was saved successfully.");
 					return RedirectToPage(new { id = newApp.Id });
 				}
 
